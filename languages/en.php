@@ -25,9 +25,11 @@ $english = array(
 	'podcasts:group' => 'Group podcasts',
 	'podcasts:enablepodcasts' => 'Enable group podcasts',
 
-	// Editing
+	// Labels
 	'podcasts:add' => 'Publish a new podcast',
 	'podcasts:edit' => 'Edit podcast',
+	'podcasts:selectfile' => 'Select File',
+	'podcasts:replacefile' => 'Replace File',
 
 	// Messages
 	'podcasts:success:save' => 'Podcast saved.',
@@ -37,8 +39,15 @@ $english = array(
 	'podcasts:error:edit' => 'This podcast may not exist or you may not have permissions to edit it.',
 	'podcasts:error:notfound' => 'Podcast not found.',
 	'podcasts:error:missing:title' => 'Please enter a podcast title!',
-	'podcasts:error:missing:description' => 'Please enter a description for your podcast',
+	'podcasts:error:missing:description' => 'Please enter a description for your podcast!',
+	'podcasts:error:missing:file' => 'Please select a file to upload for this podcast!',
+	'podcasts:error:partialupload' => 'Error: partial podcast file upload',
+	'podcasts:error:unknown' => 'Unknown error while uploading podcast.',
 	'podcasts:none' => 'No podcasts',
+	'podcasts:filehelp' => 'MP3 or M4A',
+
+	// Exceptions
+	'InvalidPodcastFileException:InvalidMimeType' => 'Invalid Podcast Mime Type: %s',
 
 	// River
 	'river:create:object:podcast' => '%s published a new podcast %s',

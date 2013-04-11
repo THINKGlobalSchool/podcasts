@@ -177,6 +177,7 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
 	$vars = array();
 	$vars['id'] = 'podcast-edit';
 	$vars['class'] = 'elgg-form-alt';
+	$vars['enctype'] = 'multipart/form-data';
 
 	$sidebar = '';
 	if ($page == 'edit') {
@@ -188,19 +189,6 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
 			$vars['entity'] = $podcast;
 
 			$title .= ": \"$podcast->title\"";
-
-			if ($revision) {
-				$revision = elgg_get_annotation_from_id((int)$revision);
-				$vars['revision'] = $revision;
-				$title .= ' ' . elgg_echo('podcasts:edit_revision_notice');
-
-				if (!$revision || !($revision->entity_guid == $guid)) {
-					$content = elgg_echo('podcasts:error:revision_not_found');
-					$return['content'] = $content;
-					$return['title'] = $title;
-					return $return;
-				}
-			}
 
 			$body_vars = podcasts_prepare_form_vars($podcast, $revision);
 
@@ -289,4 +277,17 @@ function podcasts_prepare_form_vars($podcast = NULL, $revision = NULL) {
 	}
 
 	return $values;
+}
+
+/**
+ * Get valid podcast mimetypes
+ * 
+ * @return array
+ */
+function podcasts_get_valid_mime_types() {
+	return array(
+		'audio/mpeg',
+		'audio/m4a',
+		'audio/mp4'
+	);
 }

@@ -16,6 +16,8 @@ $guid = get_input('guid');
 // Set up sticky form
 elgg_make_sticky_form('podcast');
 
+$error = FALSE;
+
 if ($guid) {
 	$podcast = get_entity($guid);
 	if (!elgg_instanceof($podcast, 'object', 'podcast') || !$podcast->canEdit()) {
@@ -24,12 +26,16 @@ if ($guid) {
 	}
 } else {
 	$podcast = new ElggPodcast();
+
+	// New podcasts require a file
+	if (empty($_FILES['upload']['name'])) {
+		$error = TRUE;
+		register_error(elgg_echo('podcasts:error:missing:file'));
+	}
 }
 
 // Check required fields
 $required = array('title', 'description');
-
-$error = FALSE;
 foreach ($required as $field) {
 	$value = get_input($field);
 	if (empty($value)) {
@@ -59,21 +65,38 @@ $podcast->tags = $tags;
 $podcast->access_id = $access_id;
 $podcast->container_guid = $container_guid;
 
-// Try to save
-if ($podcast->save()) {
-	// Clear sticky form 
-	elgg_clear_sticky_form('podcast');
-
-	system_message(elgg_echo('podcasts:success:save'));
-
-	// Add to river if this is a new podcast
-	if (!$guid) {
-		// River item
-		add_to_river('river/object/podcast/create', 'create', $podcast->owner_guid, $podcast->getGUID());
-	}
-	forward($podcast->getURL());
-} else {
-	register_error(elgg_echo('podcasts:error:save'));
-	forward(REFERER);
+// We have a new/replacement file for this podcast
+if (isset($_FILES['upload']['name']) && !empty($_FILES['upload']['name'])) {
+	$file = $_FILES['upload'];
 }
 
+// Try saving
+try {
+	$result = $podcast->save($file);
+
+	if ($result) {	
+		// Clear sticky form 
+		elgg_clear_sticky_form('podcast');
+
+		system_message(elgg_echo('podcasts:success:save'));
+
+		// Add to river if this is a new podcast
+		if (!$guid) {
+			// River item
+			add_to_river('river/object/podcast/create', 'create', $podcast->owner_guid, $podcast->getGUID());
+		}
+
+		$fwd = $podcast->getURL();
+	} else {
+		register_error(elgg_echo('podcasts:error:save'));
+	}
+
+} catch (Exception $ex) {
+	register_error($ex->getMessage());
+}
+
+if (!$fwd) {
+	$fwd = REFERER;
+}
+
+forward($fwd);

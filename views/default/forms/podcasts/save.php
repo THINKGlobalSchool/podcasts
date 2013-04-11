@@ -8,6 +8,7 @@
  * @copyright THINK Global School 2010 - 2013
  * @link http://www.thinkglobalschool.com/
  *
+ * @todo need to check file types.. in action and in js
  */
 
 $podcast = get_entity($vars['guid']);
@@ -30,6 +31,9 @@ if ($vars['guid']) {
 		'text' => elgg_echo('delete'),
 		'class' => 'elgg-button elgg-button-delete float-alt'
 	));
+	$file_label = elgg_echo("podcasts:replacefile");
+} else {
+	$file_label = elgg_echo("podcasts:selectfile");
 }
 
 $save_button = elgg_view('input/submit', array(
@@ -52,6 +56,13 @@ $description_input = elgg_view('input/longtext', array(
 	'name' => 'description',
 	'id' => 'podcast-description',
 	'value' => $vars['description']
+));
+
+$file_help = elgg_echo('podcasts:filehelp');
+$file_input = elgg_view('input/file', array(
+	'name' => 'upload',
+	'id' => 'podcast-file',
+	'accept' => 'audio/*'
 ));
 
 $tags_label = elgg_echo('tags');
@@ -84,6 +95,10 @@ $content = <<<HTML
 	<div>
 		<label for="podcast-description">$description_label</label>
 		$description_input
+	</div>
+	<div>
+		<label for="podcast-file">$file_label</label><span class='elgg-text-help'>$file_help</span>
+		$file_input
 	</div>
 	<div>
 		<label for="podcast-tags">$tags_label</label>
