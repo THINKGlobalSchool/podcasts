@@ -14,6 +14,7 @@
  * Get page components to view a podcast
  *
  * @param int $guid GUID of a podcast entity.
+ *
  * @return array
  */
 function podcasts_get_page_content_view($guid = NULL) {
@@ -55,6 +56,7 @@ function podcasts_get_page_content_view($guid = NULL) {
  * Get page components to list a user's or all podcasts.
  *
  * @param int $container_guid The GUID of the page owner or NULL for all podcasts
+ *
  * @return array
  */
 function podcasts_get_page_content_list($container_guid = NULL) {
@@ -97,7 +99,7 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 		$return['filter_context'] = 'all';
 		$return['title'] = elgg_echo('podcasts:title:all_podcasts');
 		elgg_pop_breadcrumb();
-		elgg_push_breadcrumb(elgg_echo('podcast'));
+		elgg_push_breadcrumb(elgg_echo('podcasts'));
 	}
 
 	elgg_register_title_button();
@@ -116,6 +118,7 @@ function podcasts_get_page_content_list($container_guid = NULL) {
  * Get page components to list of the user's friends' podcasts.
  *
  * @param int $user_guid
+ *
  * @return array
  */
 function podcasts_get_page_content_friends($user_guid) {
@@ -166,6 +169,7 @@ function podcasts_get_page_content_friends($user_guid) {
  *
  * @param string  $page     'edit' or 'new'
  * @param int     $guid     GUID of podcast or container
+ *
  * @return array
  */
 function podcasts_get_page_content_edit($page, $guid = 0) {
@@ -219,6 +223,7 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
  * Pull together podcast variables for the save form
  *
  * @param ElggPodcast       $podcast
+ *
  * @return array
  */
 function podcasts_prepare_form_vars($podcast = NULL, $revision = NULL) {
@@ -290,4 +295,25 @@ function podcasts_get_valid_mime_types() {
 		'audio/m4a',
 		'audio/mp4'
 	);
+}
+
+/**
+ * Get normalized extension for given mime type
+ *
+ * @param string $mime_type
+ *
+ * @return string|bool
+ */
+function podcasts_get_mime_type_extension($mime_type) {
+	switch ($mime_type) {
+		case 'audio/mpeg':
+			return 'mp3';
+			break;
+		case 'audio/m4a':
+		case 'audio/mp4':
+			return 'm4a';
+			break;
+		default:
+			return FALSE;
+	}
 }

@@ -9,8 +9,11 @@
  * @link http://www.thinkglobalschool.com/
  *
  * @todo
- * - Lots of stuff
+ * - RSS feeds for subscription
+ * - Prettier layout
+ * - Inline instructions/info (general info, submitting to itunes, etc)
  * - Widgets
+ * - Better uploader
  */
 
 elgg_register_event_handler('init', 'system', 'podcasts_init');
@@ -25,14 +28,24 @@ function podcasts_init() {
 	elgg_register_menu_item('site', $item);
 
 	// Register podcasts JS
-	$p_js = elgg_get_simplecache_url('js', 'podcasts/podcasts');
+	$js = elgg_get_simplecache_url('js', 'podcasts/podcasts');
 	elgg_register_simplecache_view('js/podcasts/podcasts');
-	elgg_register_js('elgg.podcasts', $p_js);
+	elgg_register_js('elgg.podcasts', $js);
+
+	// Register JPlayer JS
+	$js = elgg_get_simplecache_url('js', 'jplayer');
+	elgg_register_simplecache_view('js/jplayer');
+	elgg_register_js('jquery.jplayer', $js);
 
 	// Register podcasts CSS
-	$p_css = elgg_get_simplecache_url('css', 'podcasts/css');
+	$css = elgg_get_simplecache_url('css', 'podcasts/css');
 	elgg_register_simplecache_view('css/podcasts/css');
-	elgg_register_css('elgg.podcasts', $p_css);
+	elgg_register_css('elgg.podcasts', $css);
+
+	// Register jPlayer Skin CSS
+	$css = elgg_get_simplecache_url('css', 'jplayer_bluemonday');
+	elgg_register_simplecache_view('css/jplayer_bluemonday');
+	elgg_register_css('jquery.jplayer.bluemonday', $css);
 
 	// Add podcasts to owner block
 	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'podcasts_owner_block_menu');
@@ -49,6 +62,9 @@ function podcasts_init() {
 	// Register podcasts for notifications
 	register_notification_object('object', 'podcast', elgg_echo('podcasts:newpodcast'));
 	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'podcasts_notify_message');
+
+	// Hook into entity menu for podcasts
+	elgg_register_plugin_hook_handler('register', 'menu:entity', 'podcasts_setup_entity_menu');
 
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';
@@ -68,6 +84,7 @@ function podcasts_init() {
  *  New podcast:        podcasts/add/<guid>
  *  Edit podcast:       podcasts/edit/<guid>/<revision>
  *  Group podcasts:     podcasts/group/<guid>/all
+ *  Download podcast:   podcasts/download/<guid>
  *
  * Title is ignored
  *
@@ -80,12 +97,17 @@ function podcasts_page_handler($page) {
 
 	// Load JS
 	elgg_load_js('elgg.podcasts');
+	elgg_load_js('jquery.jplayer');
 
 	// Load CSS
 	elgg_load_css('elgg.podcasts');
+	elgg_load_css('jquery.jplayer.bluemonday');
 
 	// Push an 'all' podcasts breadcrumb
-	elgg_push_breadcrumb(elgg_echo('podcast'), "podcasts/all");
+	elgg_push_breadcrumb(elgg_echo('podcasts'), "podcasts/all");
+
+	// Pages dir
+	$pages_dir = elgg_get_plugins_path() . 'podcasts/pages/podcasts';
 
 	if (!isset($page[0])) {
 		$page[0] = 'all';
@@ -121,6 +143,13 @@ function podcasts_page_handler($page) {
 			break;
 		case 'all':
 			$params = podcasts_get_page_content_list();
+			break;
+		case 'download':
+			set_input('guid', $page[1]);
+			if ($page[2] === 'inline') {
+				set_input('inline', 1);
+			}
+			include "$pages_dir/download.php";
 			break;
 		default:
 			return false;
@@ -200,4 +229,34 @@ function podcasts_notify_message($hook, $type, $value, $params) {
 		));
 	}
 	return null;
+}
+
+/**
+ * Add items to the podcast entity menu
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ *
+ * @return array
+ */
+function podcasts_setup_entity_menu($hook, $type, $value, $params) {
+	$entity = $params['entity'];
+	
+	if (!elgg_instanceof($entity, 'object', 'podcast')) {
+		return $value;
+	}
+	
+	// Download link
+	$options = array(
+		'name' => 'podcasts_download',
+		'text' => elgg_echo('podcasts:download'),
+		'encode_text' => false,
+		'href' => $entity->getDownloadURL(),
+	);
+
+	$value[] = ElggMenuItem::factory($options);
+
+	return $value;
 }

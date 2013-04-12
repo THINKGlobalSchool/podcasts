@@ -61,11 +61,15 @@ if (elgg_in_context('widgets')) {
 	$metadata = '';
 }
 
+$player = elgg_view('podcasts/player', array('entity' => $podcast));
+
 if ($full) {
 	$body = elgg_view('output/longtext', array(
 		'value' => $podcast->description,
 		'class' => 'podcast',
 	));
+
+	$body .= $player;
 
 	$params = array(
 		'entity' => $podcast,
@@ -89,7 +93,7 @@ if ($full) {
 		'entity' => $podcast,
 		'metadata' => $metadata,
 		'subtitle' => $subtitle,
-		'content' => $excerpt,
+		'content' => $player,
 	);
 
 	$params = $params + $vars;

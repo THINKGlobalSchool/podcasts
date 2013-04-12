@@ -32,7 +32,6 @@ class ElggPodcast extends ElggFile {
 	 * @throws InvalidPodcastFileException|IOException
 	 */
 	public function save($data = NULL) {
-
 		if (!parent::save()) {
 			return FALSE;
 		}
@@ -60,6 +59,41 @@ class ElggPodcast extends ElggFile {
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * Return the download url for this podcast
+	 *
+	 * @param bool $inline Get file inline
+	 * 
+	 * @return string
+	 */
+	public function getDownloadURL($inline = FALSE) {
+		if ($inline) {
+			$inline = "inline/";
+		}
+		$download_url = elgg_normalize_url("podcasts/download/{$this->guid}/{$inline}");
+		return $download_url . $this->getFileTitle();
+	}
+
+	/**
+	 * Get the file title based on entity title and original filename
+	 *
+	 * @return string
+	 */
+	public function getFileTitle() {
+		$ext = $this->getFileExtension();
+		return elgg_get_friendly_title($this->title) . ".{$ext}";
+	}
+
+	/**
+	 * Get normalized file extension for this podcast file
+	 * 
+	 * @return string
+	 */
+	public function getFileExtension() {
+		elgg_load_library('elgg:podcasts');
+		return podcasts_get_mime_type_extension($this->getMimeType());
 	}
 
 
