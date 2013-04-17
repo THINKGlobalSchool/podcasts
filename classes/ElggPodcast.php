@@ -63,17 +63,21 @@ class ElggPodcast extends ElggFile {
 
 	/**
 	 * Return the download url for this podcast
-	 *
-	 * @param bool $inline Get file inline
 	 * 
 	 * @return string
 	 */
-	public function getDownloadURL($inline = FALSE) {
-		if ($inline) {
-			$inline = "inline/";
-		}
-		$download_url = elgg_normalize_url("podcasts/download/{$this->guid}/{$inline}");
+	public function getDownloadURL() {
+		$download_url = elgg_normalize_url("podcasts/download/{$this->guid}/");
 		return $download_url . $this->getFileTitle();
+	}
+
+	/**
+	 * Return the serve url for this podcast
+	 * 
+	 * @return string
+	 */
+	public function getServeURL() {
+		return elgg_normalize_url("podcasts/serve/{$this->guid}/play.") . $this->getFileExtension();
 	}
 
 	/**

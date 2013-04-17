@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg Podcasts jPlayer JS simplecache view
+ * Elgg Podcasts soundmanager2 JS simplecache view
  *
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -10,6 +10,6 @@
  *
  */
 $js_path = elgg_get_config('path');
-$js_path = "{$js_path}mod/podcasts/vendors/jplayer/jquery.jplayer.min.js";
+$js_path = "{$js_path}mod/podcasts/vendors/soundmanager2/soundmanager2.js";
 
 include $js_path;

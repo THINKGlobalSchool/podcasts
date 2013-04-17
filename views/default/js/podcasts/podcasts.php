@@ -12,8 +12,9 @@
 ?>
 elgg.provide('elgg.podcasts');
 
-// jPlayer swf location
-elgg.podcasts.swfPath = elgg.get_site_url() + 'mod/podcasts/vendors/jplayer' 
+elgg.podcasts.swfPath = elgg.get_site_url() + 'mod/podcasts/vendors/soundmanager2/swf/';
+
+elgg.podcasts.SM = null;
 
 /**
  * Podcasts JS init
@@ -23,45 +24,52 @@ elgg.podcasts.init = function() {
 }
 
 /**
- * Init all jPlayer instances
+ * Init all podcasts
  */
 elgg.podcasts.initPlayers = function() {
-	$('.elgg-podcast-player').each(function() {
-		elgg.podcasts.initPlayer($(this));
+	elgg.podcasts.SM = soundManager.setup({
+		url: elgg.podcasts.swfPath,
+		flashVersion: 9, // optional: shiny features (default = 8)// optional: ignore Flash where possible, use 100% HTML5 mode
+		preferFlash: false,
+		onready: function() {
+			// Ready to use; soundManager.createSound() etc. can now be called.
+			$('div.elgg-podcast').each(function() {
+				var sound = soundManager.createSound({
+					id: $(this).data('podcast_id'),
+					url: $(this).data('podcast_url'),
+					volume: 50
+					//onload: function() {}
+				});
+			});
+		}
 	});
+
+	// Delegate play, pause, stop
+	$(document).delegate('.elgg-podcast-play', 'click', elgg.podcasts.play);
+	$(document).delegate('.elgg-podcast-pause', 'click', elgg.podcasts.pause);
+	$(document).delegate('.elgg-podcast-stop', 'click', elgg.podcasts.stop);
+
 }
 
-/**
- * Init a jPlayer instance on given element
- * 
- * @param $player_element The element
- */
-elgg.podcasts.initPlayer = function($player_element) {
-	// Get type and url from player data
-	var type = $player_element.data('file_ext');
-	var url = $player_element.data('file_url');
+elgg.podcasts.play = function(event) {
+	if (elgg.podcasts.SM) {
+		elgg.podcasts.SM.getSoundById($(this).parent().data('podcast_id')).play();
+	}
+	event.preventDefault();
+}
 
-	// Set up media source
-	var set_media = {};
-	set_media[type] = url; // ie: m4a: 'http://example/myfile.m4a'
+elgg.podcasts.pause = function(event) {
+	if (elgg.podcasts.SM) {
+		elgg.podcasts.SM.getSoundById($(this).parent().data('podcast_id')).pause();
+	}
+	event.preventDefault();
+}
 
-	// Unique css ancestor for each jPlayer instance
-	var ancestor = "#" + $player_element.next().attr('id')
-
-	// Init player
-	$player_element.jPlayer({
-		ready: function() {
-			// Set media for this player using set_media object
-			$(this).jPlayer("setMedia", set_media)
-		},
-		play: function() {
-			// Pause other players if there are multiple instances
-       		$(this).jPlayer("pauseOthers");
-    	},
-		swfPath: elgg.podcasts.swfPath, 
-		supplied: type, // ie: mp3 or m4a
-		cssSelectorAncestor: ancestor
-	});
+elgg.podcasts.stop = function(event) {
+	if (elgg.podcasts.SM) {
+		elgg.podcasts.SM.getSoundById($(this).parent().data('podcast_id')).stop();
+	}
+	event.preventDefault();
 }
 
 elgg.register_hook_handler('init', 'system', elgg.podcasts.init);

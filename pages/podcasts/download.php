@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg Podcasts File Download
+ * Elgg Podcasts Download Podcast
  *
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -13,31 +13,34 @@
 // Get the guid
 $podcast_guid = get_input("guid");
 
-// Get inline flag
-$inline = get_input('inline', 0);
-
-$disposition = $inline ? 'inline' : 'attachment';
-
 // Get the file
 $podcast = get_entity($podcast_guid);
+
+// Check for valid podcast
 if (!$podcast) {
 	register_error(elgg_echo("podcasts:downloadfailed"));
-	forward();
+	forward(REFERER);
 }
 
+// Podcast file info
 $mime = $podcast->getMimeType();
-
 $podcastname = $podcast->getFileTitle();
-
 $filename = $podcast->getFilenameOnFilestore();
 
-// fix for IE https issue
-header("Pragma: public");
-header("Content-type: $mime");
-header("Content-Disposition: {$disposition}; filename=\"$podcastname\"");
-header("Content-length: " . filesize($filename));
+if (!file_exists($filename)) {
+	register_error(elgg_echo("podcasts:notfound"));
+	forward(REFERER);
+}
 
+$size = filesize($filename);
+
+// Output file
+header("Pragma: public"); // fix for IE https issue
+header("Content-Type: $mime");
+header("Content-Disposition: attachment; filename=\"$podcastname\"");
+header("Content-Length: " . $size);
 ob_clean();
 flush();
 readfile($filename);
 exit;
+?>

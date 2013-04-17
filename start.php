@@ -32,20 +32,15 @@ function podcasts_init() {
 	elgg_register_simplecache_view('js/podcasts/podcasts');
 	elgg_register_js('elgg.podcasts', $js);
 
-	// Register JPlayer JS
-	$js = elgg_get_simplecache_url('js', 'jplayer');
-	elgg_register_simplecache_view('js/jplayer');
-	elgg_register_js('jquery.jplayer', $js);
+	// Register podcasts JS
+	$js = elgg_get_simplecache_url('js', 'soundmanager2');
+	elgg_register_simplecache_view('js/soundmanager2');
+	elgg_register_js('soundmanager2', $js);
 
 	// Register podcasts CSS
 	$css = elgg_get_simplecache_url('css', 'podcasts/css');
 	elgg_register_simplecache_view('css/podcasts/css');
 	elgg_register_css('elgg.podcasts', $css);
-
-	// Register jPlayer Skin CSS
-	$css = elgg_get_simplecache_url('css', 'jplayer_bluemonday');
-	elgg_register_simplecache_view('css/jplayer_bluemonday');
-	elgg_register_css('jquery.jplayer.bluemonday', $css);
 
 	// Add podcasts to owner block
 	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'podcasts_owner_block_menu');
@@ -85,6 +80,7 @@ function podcasts_init() {
  *  Edit podcast:       podcasts/edit/<guid>/<revision>
  *  Group podcasts:     podcasts/group/<guid>/all
  *  Download podcast:   podcasts/download/<guid>
+ *  Serve podcast:      podcasts/serve/<guid>
  *
  * Title is ignored
  *
@@ -97,11 +93,10 @@ function podcasts_page_handler($page) {
 
 	// Load JS
 	elgg_load_js('elgg.podcasts');
-	elgg_load_js('jquery.jplayer');
+	elgg_load_js('soundmanager2');
 
 	// Load CSS
 	elgg_load_css('elgg.podcasts');
-	elgg_load_css('jquery.jplayer.bluemonday');
 
 	// Push an 'all' podcasts breadcrumb
 	elgg_push_breadcrumb(elgg_echo('podcasts'), "podcasts/all");
@@ -146,10 +141,11 @@ function podcasts_page_handler($page) {
 			break;
 		case 'download':
 			set_input('guid', $page[1]);
-			if ($page[2] === 'inline') {
-				set_input('inline', 1);
-			}
 			include "$pages_dir/download.php";
+			break;
+		case 'serve':
+			set_input('guid', $page[1]);
+			include "$pages_dir/serve.php";
 			break;
 		default:
 			return false;
