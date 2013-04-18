@@ -21,10 +21,8 @@ $podcast_url = $entity->getServeURL();
 $podcast_id = 'elgg-podcast-' . $entity->guid;
 
 ?>
-<br />
-
-<div class='elgg-podcast' data-podcast_id='<?php echo $podcast_id ?>' data-podcast_url="<?php echo $podcast_url; ?>">
-	<a href='#' class="elgg-podcast-play">Play</a> | 
-	<a href='#' class='elgg-podcast-pause'>Pause</a> | 
-	<a href='#' class='elgg-podcast-stop'>Stop</a>
+<div class='elgg-podcast-player' data-podcast_id='<?php echo $podcast_id ?>' data-podcast_url="<?php echo $podcast_url; ?>">
+	<a href='#' class="elgg-podcast-player-play">Play</a> | 
+	<a href='#' class='elgg-podcast-player-pause'>Pause</a> | 
+	<a href='#' class='elgg-podcast-player-stop'>Stop</a>
 </div>

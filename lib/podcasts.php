@@ -33,7 +33,6 @@ function podcasts_get_page_content_view($guid = NULL) {
 	}
 
 	$return['title'] = $podcast->title;
-
 	$container = $podcast->getContainerEntity();
 
 	$crumbs_title = $container->name;
@@ -48,6 +47,8 @@ function podcasts_get_page_content_view($guid = NULL) {
 	$return['content'] = elgg_view_entity($podcast, array('full_view' => true));
 
 	$return['content'] .= elgg_view_comments($podcast);
+
+	$return['layout'] = 'one_sidebar';
 
 	return $return;
 }
@@ -104,7 +105,8 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 
 	elgg_register_title_button();
 
-	$list = elgg_list_entities_from_metadata($options);
+	$list = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
+
 	if (!$list) {
 		$return['content'] = elgg_echo('podcasts:none');
 	} else {
@@ -153,7 +155,7 @@ function podcasts_get_page_content_friends($user_guid) {
 			$options['container_guids'][] = $friend->getGUID();
 		}
 
-		$list = elgg_list_entities_from_metadata($options);
+		$list = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
 		if (!$list) {
 			$return['content'] = elgg_echo('podcasts:none');
 		} else {
@@ -282,6 +284,67 @@ function podcasts_prepare_form_vars($podcast = NULL, $revision = NULL) {
 	}
 
 	return $values;
+}
+
+/**
+ * Returns a rendered list of podcasts with pagination. This function should be
+ * called by wrapper functions.
+ *
+ * This is a modified version of elgg_view_entity_list
+ *
+ * @see elgg_list_entities()
+ * @see list_user_friends_objects()
+ * @see elgg_list_entities_from_metadata()
+ * @see elgg_list_entities_from_relationships()
+ * @see elgg_list_entities_from_annotations()
+ *
+ * @param array $entities Array of entities
+ * @param array $vars     Display variables
+ *		'count'            The total number of entities across all pages
+ *		'offset'           The current indexing offset
+ *		'limit'            The number of entities to display per page
+ *		'full_view'        Display the full view of the entities?
+ *		'list_class'       CSS class applied to the list
+ *		'item_class'       CSS class applied to the list items
+ *		'pagination'       Display pagination?
+ *		'list_type'        List type: 'list' (default), 'gallery'
+ *		'list_type_toggle' Display the list type toggle?
+ *
+ * @return string The rendered list of entities
+ * @access private
+ */
+function podcasts_view_entity_list($entities, $vars = array(), $offset = 0, $limit = 10, $full_view = true,
+$list_type_toggle = true, $pagination = true) {
+
+	if (!is_int($offset)) {
+		$offset = (int)get_input('offset', 0);
+	}
+
+	// list type can be passed as request parameter
+	$list_type = get_input('list_type', 'list');
+
+	$defaults = array(
+		'items' => $entities,
+		'list_class' => 'elgg-list-entity',
+		'full_view' => true,
+		'pagination' => true,
+		'list_type' => $list_type,
+		'list_type_toggle' => false,
+		'offset' => $offset,
+	);
+
+	$vars = array_merge($defaults, $vars);
+
+	if (!elgg_in_context('widgets')) {
+		unset($vars['list_class']);
+		return elgg_view('podcasts/podcasts', $vars);
+	} else {
+		if ($vars['list_type'] != 'list') {
+			return elgg_view('page/components/gallery', $vars);
+		} else {
+			return elgg_view('page/components/list', $vars);
+		}
+	}
 }
 
 /**

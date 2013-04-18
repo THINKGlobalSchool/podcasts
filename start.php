@@ -157,7 +157,7 @@ function podcasts_page_handler($page) {
 		$params['sidebar'] = elgg_view('podcasts/sidebar', array('page' => $page_type));
 	}
 
-	$body = elgg_view_layout('content', $params);
+	$body = elgg_view_layout($params['layout'] ? $params['layout'] : 'content' , $params);
 
 	echo elgg_view_page($params['title'], $body);
 	return true;

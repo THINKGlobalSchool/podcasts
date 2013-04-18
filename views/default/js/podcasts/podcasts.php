@@ -10,6 +10,7 @@
  *
  */
 ?>
+
 elgg.provide('elgg.podcasts');
 
 elgg.podcasts.swfPath = elgg.get_site_url() + 'mod/podcasts/vendors/soundmanager2/swf/';
@@ -33,22 +34,65 @@ elgg.podcasts.initPlayers = function() {
 		preferFlash: false,
 		onready: function() {
 			// Ready to use; soundManager.createSound() etc. can now be called.
-			$('div.elgg-podcast').each(function() {
+			$('div.elgg-podcast-player').each(function() {
 				var sound = soundManager.createSound({
-					id: $(this).data('podcast_id'),
-					url: $(this).data('podcast_url'),
-					volume: 50
-					//onload: function() {}
+					id:           $(this).data('podcast_id'),
+					url:          $(this).data('podcast_url'),
+					volume:       50,
+					onplay:       elgg.podcasts.events.play,
+					onstop:       elgg.podcasts.events.stop,
+					onpause:      elgg.podcasts.events.pause,
+					onresume:     elgg.podcasts.events.resume,
+					onfinish:     elgg.podcasts.events.finish,
+					whileloading: elgg.podcasts.events.whileloading,
+					whileplaying: elgg.podcasts.events.whileplaying,
+					onload:       elgg.podcasts.events.onload
 				});
 			});
 		}
 	});
 
 	// Delegate play, pause, stop
-	$(document).delegate('.elgg-podcast-play', 'click', elgg.podcasts.play);
-	$(document).delegate('.elgg-podcast-pause', 'click', elgg.podcasts.pause);
-	$(document).delegate('.elgg-podcast-stop', 'click', elgg.podcasts.stop);
+	$(document).delegate('.elgg-podcast-player-play', 'click', elgg.podcasts.play);
+	$(document).delegate('.elgg-podcast-player-pause', 'click', elgg.podcasts.pause);
+	$(document).delegate('.elgg-podcast-player-stop', 'click', elgg.podcasts.stop);
 
+}
+
+// Events
+elgg.podcasts.events = {
+	// Play event
+	play: function() {
+		console.log('PLAY!!!');
+	},
+	// Stop event
+	stop: function() {
+		console.log('STOP!!!');
+	},
+	// Pause event
+	pause: function() {
+		console.log('PAUSE!!!');
+	},
+	// Resume event
+	resume: function() {
+		console.log('RESUME!!!');
+	},
+	// Finish event
+	finish: function() {
+		console.log('FINISH!!!');
+	},
+	// Whileloading event
+	whileloading: function() {
+		console.log('WHILE LOADING!!!');
+	},
+	// Whileplaying event
+	whileplaying: function() {
+		console.log('WHILE PLAYING!!!');
+	},
+	// Onload event
+	onload: function() {
+		console.log('ONLOAD!!!');
+	}
 }
 
 elgg.podcasts.play = function(event) {

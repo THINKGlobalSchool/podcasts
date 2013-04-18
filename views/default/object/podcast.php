@@ -63,10 +63,18 @@ if (elgg_in_context('widgets')) {
 
 $player = elgg_view('podcasts/player', array('entity' => $podcast));
 
+$podcast_title = elgg_view_title(elgg_view('output/url', array(
+		'text' => $podcast->title,
+		'href' => $podcast->getURL()
+	)), 
+	array(
+		'class' => 'elgg-podcast-title'
+));
+
 if ($full) {
 	$body = elgg_view('output/longtext', array(
 		'value' => $podcast->description,
-		'class' => 'podcast',
+		'class' => 'elgg-podcast-description'
 	));
 
 	$body .= $player;
@@ -81,10 +89,14 @@ if ($full) {
 	$params = $params + $vars;
 	$summary = elgg_view('object/elements/summary', $params);
 
+	//echo $podcast_title;
+
 	echo elgg_view('object/elements/full', array(
 		'summary' => $summary,
 		'icon' => $owner_icon,
 		'body' => $body,
+		'class' => 'elgg-podcast',
+		'title' => 'sd',
 	));
 
 } else {
@@ -93,11 +105,24 @@ if ($full) {
 		'entity' => $podcast,
 		'metadata' => $metadata,
 		'subtitle' => $subtitle,
-		'content' => $player,
+		'title' => false
 	);
 
 	$params = $params + $vars;
 	$list_body = elgg_view('object/elements/summary', $params);
 
-	echo elgg_view_image_block($owner_icon, $list_body);
+	$body = $podcast_title;
+
+	$body .= elgg_view_image_block($owner_icon, $list_body);
+
+	$body .= elgg_view('output/longtext', array(
+		'value' => elgg_get_excerpt($podcast->description),
+		'class' => 'elgg-podcast-description'
+	));
+
+	$body .= $player;
+
+	echo $body;
 }
+
+
