@@ -17,12 +17,15 @@ if (!elgg_instanceof($entity, 'object', 'podcast')) {
 	return FALSE;
 }
 
-$podcast_url = $entity->getServeURL();
-$podcast_id = 'elgg-podcast-' . $entity->guid;
+$guid = $entity->guid;
+$title = $entity->title;
+$url = $entity->getServeURL();
+$owner = $entity->getOwnerEntity()->name;
 
 ?>
-<div class='elgg-podcast-player' data-podcast_id='<?php echo $podcast_id ?>' data-podcast_url="<?php echo $podcast_url; ?>">
-	<a href='#' class="elgg-podcast-player-play">Play</a> | 
-	<a href='#' class='elgg-podcast-player-pause'>Pause</a> | 
-	<a href='#' class='elgg-podcast-player-stop'>Stop</a>
-</div>
+<div class='_elgg_podcast_player'
+	data-podcast_id="<?php echo $guid; ?>"
+	data-podcast_url="<?php echo $url; ?>"
+	data-podcast_title="<?php echo $title; ?>"
+	data-podcast_owner="<?php echo $owner; ?>"
+></div>

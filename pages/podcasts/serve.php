@@ -83,4 +83,5 @@ while(!feof($fm) && $cur <= $end && (connection_status() == 0)) {
 	print fread($fm, min(1024 * 16, ($end - $cur) + 1));
 	$cur += 1024 * 16;
 }
+exit;
 ?>
