@@ -13,25 +13,29 @@
 $full = elgg_extract('full_view', $vars, FALSE);
 $podcast = elgg_extract('entity', $vars, FALSE);
 
-if (!$podcast) {
+if (!elgg_instanceof($podcast, 'object', 'podcast')) {
 	return TRUE;
 }
 
 $owner = $podcast->getOwnerEntity();
 $container = $podcast->getContainerEntity();
 
+$owner_url = "podcasts/owner/{$owner->username}";
+$owner_name = $owner->name;
+
+
+
 $categories = elgg_view('output/categories', $vars);
 
 $owner_icon = elgg_view_entity_icon($owner, 'tiny');
 $owner_link = elgg_view('output/url', array(
-	'href' => "podcasts/owner/$owner->username",
-	'text' => $owner->name,
+	'href' => $owner_url,
+	'text' => $owner_name,
 	'is_trusted' => true,
 ));
 
 $author_text = elgg_echo('byline', array($owner_link));
 $date = elgg_view_friendly_time($podcast->time_created);
-
 
 $comments_count = $podcast->countComments();
 
@@ -63,12 +67,14 @@ if (elgg_in_context('widgets')) {
 
 $player = elgg_view('podcasts/player', array('entity' => $podcast));
 
-$podcast_title = elgg_view_title(elgg_view('output/url', array(
-		'text' => $podcast->title,
+$episode_title = elgg_echo('podcasts:episode_title', array(
+	podcasts_get_episode_number($podcast),
+	$podcast->title
+));
+
+$podcast_title = elgg_view('output/url', array(
+		'text' => $episode_title,
 		'href' => $podcast->getURL()
-	)), 
-	array(
-		'class' => 'elgg-podcast-title'
 ));
 
 if ($full) {
@@ -88,8 +94,6 @@ if ($full) {
 
 	$params = $params + $vars;
 	$summary = elgg_view('object/elements/summary', $params);
-
-	//echo $podcast_title;
 
 	echo elgg_view('object/elements/full', array(
 		'summary' => $summary,
@@ -111,7 +115,25 @@ if ($full) {
 	$params = $params + $vars;
 	$list_body = elgg_view('object/elements/summary', $params);
 
-	$body = $podcast_title;
+	if (get_input('show_podcast_container')) {
+		if (elgg_instanceof($container, 'group')) {
+			$container = $podcast->getContainerEntity();
+			$owner_url = "podcasts/group/{$container->guid}/all";
+			$owner_name = $container->name;
+		}
+
+		$podcasts_link = elgg_view('output/url', array(
+			'href' => $owner_url,
+			'text' => elgg_echo('podcasts:title:owner_podcasts', array($owner_name)),
+			'is_trusted' => true,
+		));
+
+		$body .= "<h3 class='elgg-podcast-title'>" . $podcasts_link . "</h3>";
+	
+		$body .= "<h2 class='elgg-podcast-title'>" . $podcast_title . "</h2>";
+	} else {
+		$body .= "<h3 class='elgg-podcast-title'>" . $podcast_title . "</h3>";
+	}
 
 	$body .= elgg_view_image_block($owner_icon, $list_body);
 

@@ -32,7 +32,11 @@ function podcasts_get_page_content_view($guid = NULL) {
 		forward('');
 	}
 
-	$return['title'] = $podcast->title;
+	$return['title'] = elgg_echo('podcasts:episode_title', array(
+		podcasts_get_episode_number($podcast),
+		$podcast->title
+	));
+
 	$container = $podcast->getContainerEntity();
 
 	$crumbs_title = $container->name;
@@ -83,7 +87,7 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 		if (!$container) {
 
 		}
-		$return['title'] = elgg_echo('podcasts:title:user_podcasts', array($container->name));
+		$return['title'] = elgg_echo('podcasts:title:owner_podcasts', array($container->name));
 
 		$crumbs_title = $container->name;
 		elgg_push_breadcrumb($crumbs_title);
@@ -96,7 +100,13 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 			// do not show button or select a tab when viewing someone else's podcasts
 			$return['filter_context'] = 'none';
 		}
+
+		// Default feed
+		$return['feed_description'] = elgg_echo('podcasts:feed:description', array($container->name));
+
+
 	} else {
+		set_input('show_podcast_container', 1);
 		$return['filter_context'] = 'all';
 		$return['title'] = elgg_echo('podcasts:title:all_podcasts');
 		elgg_pop_breadcrumb();
@@ -141,6 +151,8 @@ function podcasts_get_page_content_friends($user_guid) {
 
 	elgg_register_title_button();
 
+	set_input('show_podcast_container', 1);
+
 	if (!$friends = get_user_friends($user_guid, ELGG_ENTITIES_ANY_VALUE, 0)) {
 		$return['content'] .= elgg_echo('friends:none:you');
 		return $return;
@@ -162,6 +174,7 @@ function podcasts_get_page_content_friends($user_guid) {
 			$return['content'] = $list;
 		}
 	}
+
 
 	return $return;
 }
@@ -219,6 +232,33 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
 	$return['content'] = $content;
 	$return['sidebar'] = $sidebar;
 	return $return;	
+}
+
+/**
+ * Build content for user settings
+ *
+ * @return array
+ */
+function podcasts_get_user_settings_content() {
+	// Set the context to settings
+	elgg_set_context('settings');
+
+	elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
+	$user = elgg_get_page_owner_entity();
+	
+ 	$title = elgg_echo('podcasts:title:usersettings');
+	
+	elgg_pop_breadcrumb();
+	elgg_push_breadcrumb(elgg_echo('settings'), "settings/user/$user->username");
+	elgg_push_breadcrumb($title);
+	
+	$content = elgg_view_form('podcasts/usersettings', array('user' => $user));
+	
+	$return['title'] = $title;
+	$return['content'] = $content;
+	$return['layout'] = 'one_sidebar';
+
+	return $return;
 }
 
 /**
@@ -335,7 +375,7 @@ $list_type_toggle = true, $pagination = true) {
 
 	$vars = array_merge($defaults, $vars);
 
-	if (!elgg_in_context('widgets')) {
+	if (!elgg_in_context('widgets') && elgg_get_viewtype() !== 'rss') {
 		unset($vars['list_class']);
 		return elgg_view('podcasts/podcasts', $vars);
 	} else {
@@ -346,6 +386,39 @@ $list_type_toggle = true, $pagination = true) {
 		}
 	}
 }
+
+/**
+ * Get podcast episode number
+ * 
+ * @param ElggPodcast The podcast
+ * 
+ * @return int
+ */
+function podcasts_get_episode_number($podcast) {
+	$options = array(
+		'type' => 'object',
+		'subtype' => 'podcast',
+		'container_guid' => $podcast->container_guid,
+		'order_by' => "e.guid",
+		'callback' => 'podcasts_guid_callback',
+		'limit' => ELGG_ENTITIES_NO_VALUE,
+	);
+	
+	$podcasts = elgg_get_entities($options);
+
+	return array_search($podcast->guid, $podcasts) + 1;
+}
+
+/**
+ * Returns just a guid from a database $row. Used in elgg_get_entities()'s callback.
+ *
+ * @param stdClass $row
+ * @return type
+ */
+function podcasts_guid_callback($row) {
+	return ($row->guid) ? $row->guid : false;
+}
+
 
 /**
  * Get valid podcast mimetypes

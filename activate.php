@@ -16,3 +16,19 @@ if (get_subtype_id('object', 'podcast')) {
 } else {
 	add_subtype('object', 'podcast', 'ElggPodcast');
 }
+
+// Get the plugin entity
+$plugin = elgg_get_plugin_from_id('podcasts');
+
+// Default settings
+$defaults = array(
+	// Default copyright
+	'podcasts_copyright' => "&#169; " . elgg_get_site_entity()->name . " " . date('Y', time()),
+);
+
+// Set default config values
+foreach ($defaults as $setting => $value) {
+	if (!$plugin->getSetting($setting)) {
+		$plugin->setSetting($setting, $value);
+	}
+}

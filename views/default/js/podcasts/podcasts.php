@@ -401,6 +401,8 @@ function ElggPodcastPlayer() {
 		finish: function() {
 			self.setButtonState('stopped');
 			this.player.position.css('width', '0px');
+			this.position = 0;
+			self.updateTime(this);
 		},
 		// Whileloading event
 		whileloading: function() {

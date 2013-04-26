@@ -207,3 +207,22 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 	border-bottom: 2px solid #DDDDDD;
 	padding: 5px;
 }
+
+.elgg-list-podcasts .elgg-podcast h3.elgg-podcast-title {
+	background: none repeat scroll 0 0 #444444;
+	border-bottom: medium none;
+	padding: 5px 8px;
+	text-transform: uppercase;
+	-moz-box-shadow: 1px 1px 5px #000000 inset;
+	-webkit-box-shadow: 1px 1px 5px #000000 inset;
+	box-shadow: 1px 1px 5px #000000 inset;
+}
+
+.elgg-list-podcasts .elgg-podcast h3.elgg-podcast-title a {
+	color: #FFFFFF;
+
+}
+
+.elgg-list-podcasts .elgg-podcast h3.elgg-podcast-title a:hover {
+	text-decoration: underline;
+}
