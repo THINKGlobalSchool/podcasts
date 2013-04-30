@@ -24,6 +24,12 @@ $plugin = elgg_get_plugin_from_id('podcasts');
 $defaults = array(
 	// Default copyright
 	'podcasts_copyright' => "&#169; " . elgg_get_site_entity()->name . " " . date('Y', time()),
+
+	// Default language
+	'podcasts_language' => 'en-us',
+
+	// Exiftool location
+	'podcasts_exiftool_root' => '/usr/bin/'
 );
 
 // Set default config values

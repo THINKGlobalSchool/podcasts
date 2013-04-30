@@ -56,9 +56,41 @@ class ElggPodcast extends ElggFile {
 			}
 
 			$this->savePodcastFile($data);
+
+			$this->populatePodcastMetadata();
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * Delete this podcast.
+	 *
+	 * @return bool
+	 */
+	public function delete($recursive = TRUE) {
+		// Try regular ElggFile delete first
+		$fs = $this->getFilestore();
+		if ($fs->delete($this)) {
+			return parent::delete();
+		} else {
+			// Couldn't delete the ElggFile
+			$filename = $this->getFilenameOnFilestore($file);
+			$success = true;
+
+			// Check for a directory this time, and try again
+			if (file_exists($filename) && !is_dir($filename)) {
+				$success = unlink($filename);
+			}
+
+			// Good? Ok, delete it
+			if ($success) {
+				return delete_entity($this->get('guid'), $recursive);	
+			} else {
+				// Still an issue..
+				return FALSE;
+			}
+		}
 	}
 
 	/**
@@ -145,6 +177,26 @@ class ElggPodcast extends ElggFile {
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * Populate extended file info (duration, etc)
+	 * 
+	 * @throws PodcastMetadataException
+	 * @return bool
+	 */
+	protected function populatePodcastMetadata() {
+		elgg_load_library('elgg:podcasts');
+		$return = podcasts_populate_file_info($this);
+		if ($return == 127) {
+			$ex = elgg_echo('podcasts:error:exiftoolnotfound');
+			throw new PodcastMetadataException($ex);
+		} else if ($return > 0) {
+			$ex = elgg_echo('podcasts:error:exiftoolfailed');
+			throw new PodcastMetadataException($ex);
+		} else {
+			return TRUE;
+		}
 	}
 
 	/**

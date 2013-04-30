@@ -15,6 +15,7 @@ $user = elgg_get_logged_in_user_entity();
 $title = elgg_get_plugin_user_setting('podcast_title', $user->guid, 'podcasts');
 $subtitle = elgg_get_plugin_user_setting('podcast_subtitle', $user->guid, 'podcasts');
 $description = elgg_get_plugin_user_setting('podcast_description', $user->guid, 'podcasts');
+$language = elgg_get_plugin_user_setting('podcast_language', $user->guid, 'podcasts');
 $categories = elgg_get_plugin_user_setting('podcast_categories', $user->guid, 'podcasts');
 $copyright = elgg_get_plugin_user_setting('podcast_copyright', $user->guid, 'podcasts');
 
@@ -31,6 +32,11 @@ if (empty($description)) {
 // Set copyright if empty
 if (empty($copyright)) {
 	$copyright = "&#169; " . elgg_get_site_entity()->name . " " . date('Y', time());
+}
+
+// Set language if empty
+if (empty($language)) {
+	$language = elgg_get_plugin_setting('podcasts_language', 'podcasts');
 }
 
 // Labels/Inputs
@@ -55,11 +61,18 @@ $description_input = elgg_view('input/plaintext', array(
 	'value' => $description
 ));
 
-$categories_label = elgg_echo('description');
+$categories_label = elgg_echo('podcasts:categories');
 $categories_input = elgg_view('input/tags', array(
 	'name' => 'categories',
 	'id' => 'podcast-categories',
 	'value' => $categories
+));
+
+$language_label = elgg_echo('podcasts:language');
+$language_input = elgg_view('input/text', array(
+	'name' => 'language',
+	'id' => 'podcast-language',
+	'value' => $language
 ));
 
 $copyright_label = elgg_echo('podcasts:copyright');
@@ -84,15 +97,19 @@ $content = <<<HTML
 		$subtitle_input
 	</div>
 	<div>
-		<label for="podcast-title">$description_label</label>
+		<label for="podcast-description">$description_label</label>
 		$description_input
 	</div>
 	<div>
-		<label for="podcast-title">$categories_label</label>
+		<label for="podcast-categories">$categories_label</label>
 		$categories_input
 	</div>
 	<div>
-		<label for="podcast-title">$copyright_label</label>
+		<label for="podcast-language">$language_label</label>
+		$language_input
+	</div>
+	<div>
+		<label for="podcast-copyright">$copyright_label</label>
 		$copyright_input
 	</div>
 	<div class='elgg-foot'>

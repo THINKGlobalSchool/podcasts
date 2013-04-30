@@ -142,12 +142,14 @@ function ElggPodcastPlayer() {
 			// Store elgg data
 			title = $player.data('podcast_title');
 			owner = $player.data('podcast_owner');
+			duration = $player.data('podcast_duration');
 
 			podcast.elgg_data = {
 				guid: id,
 				url: url,
 				owner_name: owner,
-				title: title
+				title: title,
+				duration: duration
 			}
 
 			// Get player template and display
@@ -168,7 +170,7 @@ function ElggPodcastPlayer() {
 
 			// Set initial timer stuff (before loading)
 	        str = self.strings.timing.replace('%s1',self.config.emptyTime);
-	        str = str.replace('%s2',self.config.emptyTime);
+	        str = str.replace('%s2', self.getTime(duration, true)); // Set initial duration from Elgg data
 	        podcast.player.timing.html(str);
 
 	        // Add this podcast to the player's podcast array

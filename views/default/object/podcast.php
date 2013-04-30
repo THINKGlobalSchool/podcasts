@@ -23,8 +23,6 @@ $container = $podcast->getContainerEntity();
 $owner_url = "podcasts/owner/{$owner->username}";
 $owner_name = $owner->name;
 
-
-
 $categories = elgg_view('output/categories', $vars);
 
 $owner_icon = elgg_view_entity_icon($owner, 'tiny');
@@ -102,7 +100,6 @@ if ($full) {
 		'class' => 'elgg-podcast',
 		'title' => 'sd',
 	));
-
 } else {
 	// Brief view
 	$params = array(

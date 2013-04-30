@@ -17,19 +17,19 @@ $subtitle = get_input('subtitle');
 $description = get_input('description');
 $categories = get_input('categories');
 $copyright = get_input('copyright');
+$language = get_input('language');
 
 if (empty($title) || empty($description) || empty($copyright)) {
 	register_error(elgg_echo('podcasts:error:missing'));
 	forward(REFERER);
 }
 
-
 elgg_set_plugin_user_setting('podcast_title', $title, $user->guid, 'podcasts');
 elgg_set_plugin_user_setting('podcast_subtitle', $subtitle, $user->guid, 'podcasts');
 elgg_set_plugin_user_setting('podcast_description', $description, $user->guid, 'podcasts');
 elgg_set_plugin_user_setting('podcast_categories', $categories, $user->guid, 'podcasts');
 elgg_set_plugin_user_setting('podcast_copyright', $copyright, $user->guid, 'podcasts');
-
+elgg_set_plugin_user_setting('podcast_language', $language, $user->guid, 'podcasts');
 
 system_message(elgg_echo('podcasts:success:usersettings'));
 forward(REFERER);

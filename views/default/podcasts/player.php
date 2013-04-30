@@ -21,6 +21,7 @@ $guid = $entity->guid;
 $title = $entity->title;
 $url = $entity->getServeURL();
 $owner = $entity->getOwnerEntity()->name;
+$milliseconds = (int)$entity->duration * 1000;
 
 ?>
 <div class='_elgg_podcast_player'
@@ -28,4 +29,5 @@ $owner = $entity->getOwnerEntity()->name;
 	data-podcast_url="<?php echo $url; ?>"
 	data-podcast_title="<?php echo $title; ?>"
 	data-podcast_owner="<?php echo $owner; ?>"
+	data-podcast_duration="<?php echo $milliseconds; ?>"
 ></div>

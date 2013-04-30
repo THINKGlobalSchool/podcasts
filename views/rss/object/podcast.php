@@ -37,6 +37,8 @@ $guid = $podcast->getURL(); // For iTunes
 
 $pubDate = date("r", $podcast->time_created); // RFC 2822
 
+$duration_string = podcasts_sec_toHHMMSS($podcast->duration);
+
 // Build keyword string
 if ($podcast->tags) {
 	$keywords = "<itunes:keywords>";
@@ -65,7 +67,7 @@ $content = <<<XML
 		<enclosure url="$enclosure_url" length="$size" type="$mime" />
 		<guid>$guid</guid>
 		<pubDate>$pubDate</pubDate>
-		<itunes:duration></itunes:duration>
+		<itunes:duration>$duration_string</itunes:duration>
 		$keywords
 	</item>
 XML;

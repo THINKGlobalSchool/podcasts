@@ -13,14 +13,9 @@
  * @uses $vars['body']       The items for the RSS feed as a string
  */
 
-// Remove RSS from URL
-$url = str_replace('?view=rss', '', full_url());
-$url = str_replace('&view=rss', '', $url);
-$url = htmlspecialchars($url, ENT_NOQUOTES, 'UTF-8');
-
 $body = elgg_extract('body', $vars, '');
 
-$extensions = elgg_view('extensions/channel', $vars);
+$extensions = elgg_view('extensions/podcasts/channel', $vars);
 
 // allow caching as required by stupid MS products for https feeds.
 header('Pragma: public', true);
@@ -30,9 +25,6 @@ echo <<<XML
 <?xml version='1.0'?>
 <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
 <channel>
-	<title><![CDATA[$title]]></title>
-	<link>$url</link>
-	<language>en-us</language>
 	$extensions
 	$body
 </channel>

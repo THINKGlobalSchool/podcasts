@@ -38,11 +38,15 @@ $english = array(
 	'podcasts:download' => 'Download',
 	'podcasts:episode_title' => 'Episode %s: %s',
 	'podcasts:copyright' => 'Copyright',
+	'podcasts:categories' => 'Categories',
+	'podcasts:language' => 'Language',
 	'podcasts:subtitle' => 'Subtitle',
 
 	// Admin
 	'podcasts:admin:general' => 'General Settings',
 	'podcasts:admin:copyright' => 'Default copyright (for iTunes feed)',
+	'podcasts:admin:language' => 'Default language (for iTunes feed)',
+	'podcasts:admin:exiftool' => 'Path to the exiftool command',
 
 	// Messages
 	'podcasts:success:save' => 'Podcast episode saved.',
@@ -58,6 +62,8 @@ $english = array(
 	'podcasts:error:partialupload' => 'Error: partial podcast episode file upload',
 	'podcasts:error:unknown' => 'Unknown error while uploading podcast episode.',
 	'podcasts:error:missing' => 'One or more required fields are missing.',
+	'podcasts:error:exiftoolnotfound' => 'Error: exiftool command not found',
+	'podcasts:error:exiftoolfailed' => 'Error: exiftool command failed',
 	'podcasts:none' => 'No episodes',
 	'podcasts:filehelp' => 'MP3 or M4A',
 	'podcasts:downloadfailed' => 'Podcast file download failed',

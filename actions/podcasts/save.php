@@ -73,7 +73,6 @@ if (isset($_FILES['upload']['name']) && !empty($_FILES['upload']['name'])) {
 // Try saving
 try {
 	$result = $podcast->save($file);
-
 	if ($result) {	
 		// Clear sticky form 
 		elgg_clear_sticky_form('podcast');
@@ -90,8 +89,11 @@ try {
 	} else {
 		register_error(elgg_echo('podcasts:error:save'));
 	}
-
 } catch (Exception $ex) {
+	// At this point the podcast entity could have been saved.. clean it up we don't want missing metadata
+	if ($podcast->guid) { // check first..
+		$podcast->delete();
+	}
 	register_error($ex->getMessage());
 }
 

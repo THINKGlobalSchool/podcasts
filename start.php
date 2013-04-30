@@ -20,6 +20,7 @@ elgg_register_event_handler('init', 'system', 'podcasts_init');
 
 // Init podcasts
 function podcasts_init() {
+
 	// Register library
 	elgg_register_library('elgg:podcasts', elgg_get_plugins_path() . 'podcasts/lib/podcasts.php');
 
@@ -69,9 +70,6 @@ function podcasts_init() {
 
 	// Register for view plugin hook to override rss page/default view
 	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handelr');
-
-	// Extend rss extensions/channel view for podcasts
-	elgg_extend_view('extensions/channel', 'extensions/podcasts/channel');
 
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';

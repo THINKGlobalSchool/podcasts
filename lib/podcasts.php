@@ -453,3 +453,55 @@ function podcasts_get_mime_type_extension($mime_type) {
 			return FALSE;
 	}
 }
+
+/**
+ * Get file info using exiftool
+ *
+ * @param ElggPodcast $podcast
+ *
+ * @return mixed  - 0 on success or error message 
+ */
+function podcasts_populate_file_info($podcast) {
+	// Get exiftool command path
+	$cmd_path = elgg_get_plugin_setting('podcasts_exiftool_root', 'podcasts');
+	
+	// Get podcast filename
+	$filename = $podcast->getFilenameOnFilestore();
+
+	// Set up exif tool command
+	$command = $cmd_path . "exiftool -S -duration# \"$filename\"";
+	$output = array();
+	$return = 0;
+
+	// Run command
+	exec($command, $output, $return);
+
+	// If we have valid output..
+	if ($return == 0 && count($output) >= 1) {
+		$duration = $output[0]; // This will be something like: Duration: 134.22424 (in seconds)
+		$duration = (int)round((float)trim(substr($duration, strpos($duration, ":") + 1)));
+		
+		// Got a valid number? Set duration.
+		if (is_int($duration)) {
+			$podcast->duration = $duration;
+		} else {
+			// Something wrong
+			$return = 1;
+		}
+	} 
+	
+	// Return value
+	return $return;
+}
+
+/**
+ * Convert number of seconds to HH:MM:SS time format
+ *
+ * @param int|float $seconds
+ *
+ * @return $string
+ */
+function podcasts_sec_toHHMMSS($seconds) {
+	$t = round($seconds);
+  	return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
+}

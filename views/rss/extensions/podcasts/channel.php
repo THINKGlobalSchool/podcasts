@@ -18,6 +18,8 @@ $podcast_image = $page_owner->getIconURL('large');
 if (elgg_instanceof($page_owner, 'group')) {
 	$podcast_email = $page_owner->getOwnerEntity()->email;
 } else {
+	$podcast_link = elgg_normalize_url("podcasts/owner/{$page_owner->username}");
+
 	$podcast_title = elgg_get_plugin_user_setting('podcast_title', $page_owner->guid, 'podcasts');
 
 	$podcast_subtitle = elgg_get_plugin_user_setting('podcast_subtitle', $page_owner->guid, 'podcasts');
@@ -25,6 +27,8 @@ if (elgg_instanceof($page_owner, 'group')) {
 	$podcast_description = elgg_get_plugin_user_setting('podcast_description', $page_owner->guid, 'podcasts');
 
 	$podcast_categories = elgg_get_plugin_user_setting('podcast_categories', $page_owner->guid, 'podcasts');
+
+	$podcast_language = elgg_get_plugin_user_setting('podcast_language', $page_owner->guid, 'podcasts');
 
 	$categories = string_to_tag_array($podcast_categories);
 
@@ -36,6 +40,15 @@ if (elgg_instanceof($page_owner, 'group')) {
 	}
 
 	$podcast_copyright = elgg_get_plugin_user_setting('podcast_copyright', $page_owner->guid, 'podcasts');
+
+	// Check for empty values and populate with plugin defaults
+	if (!$podcast_copyright) {
+		$podcast_copyright = elgg_get_plugin_setting('podcasts_copyright', 'podcasts');
+	}
+
+	if (!$podcast_language) {
+		$podcast_language = elgg_get_plugin_setting('podcasts_language', 'podcasts');
+	}
 
 	$podcast_email = $page_owner->email;
 }
@@ -53,6 +66,8 @@ if (empty($podcast_description)) {
 if (elgg_in_context('podcasts')) {
 	$content = <<<XML
 <title><![CDATA[$podcast_title]]></title>
+	<link>$podcast_link</link>
+	<language><![CDATA[$podcast_language]]></language>
 	<description><![CDATA[$podcast_description]]></description>
 	<itunes:summary><![CDATA[$podcast_description]]></itunes:summary>
 	<copyright><![CDATA[$podcast_copyright]]></copyright>
