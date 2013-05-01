@@ -71,11 +71,15 @@ function podcasts_init() {
 	// Register for view plugin hook to override rss page/default view
 	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handelr');
 
+	// Extend group settings
+	elgg_extend_view('groups/edit', 'forms/podcasts/groupsettings', 1000);
+
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';
 	elgg_register_action('podcasts/save', "$action_path/save.php");
 	elgg_register_action('podcasts/delete', "$action_path/delete.php");
 	elgg_register_action("podcasts/usersettings", "$action_path/usersettings.php");
+	elgg_register_action("podcasts/groupsettings", "$action_path/groupsettings.php");
 
 }
 
@@ -160,7 +164,19 @@ function podcasts_page_handler($page) {
 			include "$pages_dir/serve.php";
 			break;
 		case 'settings':
-			$params = podcasts_get_user_settings_content();
+			$username = $page[1];
+			if (!$username) {
+				$user = elgg_get_logged_in_user_entity();
+			} else {
+				$user = get_user_by_username($username);
+			}
+
+			if ($user->canEdit()) {
+				elgg_set_page_owner_guid($user->guid);
+				$params = podcasts_get_user_settings_content();
+			} else {
+				forward('podcasts/settings');
+			}
 			break;
 		default:
 			return false;
@@ -180,9 +196,9 @@ function podcasts_page_handler($page) {
 }
 
 // Pagesetup hook
-function podcasts_pagesetup() {
+function podcasts_pagesetup($a, $b, $c) {
 	// User settings
-	if (elgg_get_context() == "settings" && elgg_get_logged_in_user_guid()) {
+	if (elgg_in_context('settings') && elgg_get_logged_in_user_guid()) {
 		$user = elgg_get_logged_in_user_entity();
 
 		$params = array(

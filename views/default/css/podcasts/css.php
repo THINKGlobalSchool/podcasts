@@ -226,3 +226,8 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 .elgg-list-podcasts .elgg-podcast h3.elgg-podcast-title a:hover {
 	text-decoration: underline;
 }
+
+.edit-podcast-settings-button {
+	font-size: 0.9em;
+	float: right;
+}

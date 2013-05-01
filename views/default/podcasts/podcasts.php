@@ -77,4 +77,8 @@ if ($position == 'after' || $position == 'both') {
 	$html .= $nav;
 }
 
-echo $html;
+if (!$html) {
+	echo elgg_echo('podcasts:none');
+} else {
+	echo $html;
+}

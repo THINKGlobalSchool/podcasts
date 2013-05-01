@@ -103,7 +103,7 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 
 		// Default feed
 		$return['feed_description'] = elgg_echo('podcasts:feed:description', array($container->name));
-
+		$return['sidebar'] = elgg_view('podcasts/info_sidebar');
 
 	} else {
 		set_input('show_podcast_container', 1);
@@ -115,13 +115,7 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 
 	elgg_register_title_button();
 
-	$list = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
-
-	if (!$list) {
-		$return['content'] = elgg_echo('podcasts:none');
-	} else {
-		$return['content'] = $list;
-	}
+	$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
 
 	return $return;
 }
@@ -167,12 +161,7 @@ function podcasts_get_page_content_friends($user_guid) {
 			$options['container_guids'][] = $friend->getGUID();
 		}
 
-		$list = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
-		if (!$list) {
-			$return['content'] = elgg_echo('podcasts:none');
-		} else {
-			$return['content'] = $list;
-		}
+		$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
 	}
 
 
@@ -241,18 +230,16 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
  */
 function podcasts_get_user_settings_content() {
 	// Set the context to settings
-	elgg_set_context('settings');
+	elgg_push_context('settings');
 
-	elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
 	$user = elgg_get_page_owner_entity();
 	
  	$title = elgg_echo('podcasts:title:usersettings');
 	
 	elgg_pop_breadcrumb();
 	elgg_push_breadcrumb(elgg_echo('settings'), "settings/user/$user->username");
-	elgg_push_breadcrumb($title);
 	
-	$content = elgg_view_form('podcasts/usersettings', array('user' => $user));
+	$content = elgg_view_form('podcasts/usersettings', array(), array('user' => $user));
 	
 	$return['title'] = $title;
 	$return['content'] = $content;
@@ -268,7 +255,7 @@ function podcasts_get_user_settings_content() {
  *
  * @return array
  */
-function podcasts_prepare_form_vars($podcast = NULL, $revision = NULL) {
+function podcasts_prepare_form_vars($podcast = NULL) {
 
 	// input names => defaults
 	$values = array(

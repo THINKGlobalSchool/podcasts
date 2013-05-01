@@ -39,8 +39,11 @@ $english = array(
 	'podcasts:episode_title' => 'Episode %s: %s',
 	'podcasts:copyright' => 'Copyright',
 	'podcasts:categories' => 'Categories',
+	'podcasts:categories_output' => 'Categories: %s',
 	'podcasts:language' => 'Language',
 	'podcasts:subtitle' => 'Subtitle',
+	'podcasts:editpodcastsettings' => 'Edit Podcast Settings',
+	'podcasts:groupsettings' => 'Group Podcast Settings',
 
 	// Admin
 	'podcasts:admin:general' => 'General Settings',

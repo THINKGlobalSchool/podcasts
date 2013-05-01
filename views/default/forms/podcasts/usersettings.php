@@ -10,7 +10,7 @@
  *
  */
 
-$user = elgg_get_logged_in_user_entity();
+$user = elgg_extract('user', $vars, elgg_get_logged_in_user_entity());
 
 $title = elgg_get_plugin_user_setting('podcast_title', $user->guid, 'podcasts');
 $subtitle = elgg_get_plugin_user_setting('podcast_subtitle', $user->guid, 'podcasts');
@@ -19,102 +19,13 @@ $language = elgg_get_plugin_user_setting('podcast_language', $user->guid, 'podca
 $categories = elgg_get_plugin_user_setting('podcast_categories', $user->guid, 'podcasts');
 $copyright = elgg_get_plugin_user_setting('podcast_copyright', $user->guid, 'podcasts');
 
-// Set title if empty
-if (empty($title)) {
-	$title =  elgg_get_config('sitename') . ": " . elgg_echo('podcasts:title:owner_podcasts', array($user->name));
-}
-
-// Set description if empty
-if (empty($description)) {
-	$description = elgg_echo('podcasts:feed:description', array($user->name));
-}
-
-// Set copyright if empty
-if (empty($copyright)) {
-	$copyright = "&#169; " . elgg_get_site_entity()->name . " " . date('Y', time());
-}
-
-// Set language if empty
-if (empty($language)) {
-	$language = elgg_get_plugin_setting('podcasts_language', 'podcasts');
-}
-
-// Labels/Inputs
-$title_label = elgg_echo('title');
-$title_input = elgg_view('input/text', array(
-	'name' => 'title',
-	'id' => 'podcast-title',
-	'value' => $title
+// Output base seeings form
+echo elgg_view('forms/podcasts/settings', array(
+	'entity' => $user,
+	'title' => $title,
+	'description' => $description,
+	'subtitle' => $subtitle,
+	'language' => $language,
+	'categories' => $categories,
+	'copyright' => $copyright
 ));
-
-$subtitle_label = elgg_echo('podcasts:subtitle');
-$subtitle_input = elgg_view('input/text', array(
-	'name' => 'subtitle',
-	'id' => 'podcast-subtitle',
-	'value' => $subtitle
-));
-
-$description_label = elgg_echo('description');
-$description_input = elgg_view('input/plaintext', array(
-	'name' => 'description',
-	'id' => 'podcast-description',
-	'value' => $description
-));
-
-$categories_label = elgg_echo('podcasts:categories');
-$categories_input = elgg_view('input/tags', array(
-	'name' => 'categories',
-	'id' => 'podcast-categories',
-	'value' => $categories
-));
-
-$language_label = elgg_echo('podcasts:language');
-$language_input = elgg_view('input/text', array(
-	'name' => 'language',
-	'id' => 'podcast-language',
-	'value' => $language
-));
-
-$copyright_label = elgg_echo('podcasts:copyright');
-$copyright_input = elgg_view('input/text', array(
-	'name' => 'copyright',
-	'id' => 'podcast-copyright',
-	'value' => $copyright
-));
-
-$save_input = elgg_view('input/submit', array(
-	'name' => 'save',
-	'value' => elgg_echo('save'),
-));
-
-$content = <<<HTML
-	<div>
-		<label for="podcast-title">$title_label</label>
-		$title_input
-	</div>
-	<div>
-		<label for="podcast-subtitle">$subtitle_label</label>
-		$subtitle_input
-	</div>
-	<div>
-		<label for="podcast-description">$description_label</label>
-		$description_input
-	</div>
-	<div>
-		<label for="podcast-categories">$categories_label</label>
-		$categories_input
-	</div>
-	<div>
-		<label for="podcast-language">$language_label</label>
-		$language_input
-	</div>
-	<div>
-		<label for="podcast-copyright">$copyright_label</label>
-		$copyright_input
-	</div>
-	<div class='elgg-foot'>
-		$save_input
-	</div>
-HTML;
-
-echo $content;

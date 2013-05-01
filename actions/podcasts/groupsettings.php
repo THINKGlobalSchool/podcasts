@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg Podcasts Save Usersettings Action
+ * Elgg Podcasts Save Group Settings Action
  *
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -12,15 +12,17 @@
 
 $guid = get_input('guid');
 
-$user = get_entity($guid);
+$group = get_entity($guid);
 
 // Set up sticky form
 elgg_make_sticky_form('podcast-settings');
 
-if (!$user->canEdit()) {
+if (!$group->canEdit()) {
 	register_error(elgg_echo('profile:noaccess'));
 	forward(REFERER);
 }
+
+$fwd = "groups/edit/{$guid}#other";
 
 $title = get_input('title');
 $subtitle = get_input('subtitle');
@@ -31,16 +33,25 @@ $language = get_input('language');
 
 if (empty($title) || empty($description) || empty($copyright)) {
 	register_error(elgg_echo('podcasts:error:missing'));
-	forward(REFERER);
+	forward($fwd);
 }
 
-elgg_set_plugin_user_setting('podcast_title', $title, $user->guid, 'podcasts');
-elgg_set_plugin_user_setting('podcast_subtitle', $subtitle, $user->guid, 'podcasts');
-elgg_set_plugin_user_setting('podcast_description', $description, $user->guid, 'podcasts');
-elgg_set_plugin_user_setting('podcast_categories', $categories, $user->guid, 'podcasts');
-elgg_set_plugin_user_setting('podcast_copyright', $copyright, $user->guid, 'podcasts');
-elgg_set_plugin_user_setting('podcast_language', $language, $user->guid, 'podcasts');
+$podcast_settings = unserialize($group->podcast_settings);
+
+if (!$podcast_settings) {
+	$podcast_settings = array();
+}
+
+$podcast_settings['title'] = $title;
+$podcast_settings['subtitle'] = $subtitle;
+$podcast_settings['description'] = $description;
+$podcast_settings['categories'] = $categories;
+$podcast_settings['copyright'] = $copyright;
+$podcast_settings['language'] = $language;
+
+$group->podcast_settings = serialize($podcast_settings);
 
 elgg_clear_sticky_form('podcast-settings');
+
 system_message(elgg_echo('podcasts:success:usersettings'));
-forward(REFERER);
+forward($fwd);
