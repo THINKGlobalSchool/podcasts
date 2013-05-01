@@ -456,7 +456,7 @@ function podcasts_populate_file_info($podcast) {
 	$filename = $podcast->getFilenameOnFilestore();
 
 	// Set up exif tool command
-	$command = $cmd_path . "exiftool -S -duration# \"$filename\"";
+	$command = $cmd_path . "exiftool -S -Duration -n \"$filename\"";
 	$output = array();
 	$return = 0;
 
