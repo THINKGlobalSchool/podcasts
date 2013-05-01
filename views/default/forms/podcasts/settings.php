@@ -24,7 +24,7 @@ $values = array(
 );
 
 foreach ($values as $k => $v) {
-	$values[$k] = elgg_extract($k, $vars, $v);
+	$values[$k] = elgg_extract($k, $vars, $v, false);
 }
 
 // Check for sticky form
