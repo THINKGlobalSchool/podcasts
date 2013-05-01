@@ -41,11 +41,32 @@ if ($body) {
 	echo elgg_view_module('aside', $podcast_title, $body);
 }
 
+// Add subscribe link
+$podcast_feed_url = full_url();
+if (substr_count($podcast_feed_url, '?')) {
+	$podcast_feed_url .= "&view=rss";
+} else {
+	$podcast_feed_url .= "?view=rss";
+}
+
+$podcast_feed_url = elgg_format_url($podcast_feed_url);
+echo elgg_view('output/url', array(
+	'name' => 'podcast_rss',
+	'text' => elgg_view_icon('rss') . elgg_echo('podcasts:subscribe'),
+	'href' => $podcast_feed_url,
+	'class' => 'elgg-podcasts-subscribe-link'
+));
+
 if ($page_owner && $page_owner->canEdit()) {
-	$params = array(
-		'name' => 'podcasts_settings',
+	// $params = array(
+	// 	'name' => 'podcasts_settings',
+	// 	'text' => elgg_echo('podcasts:editpodcastsettings'),
+	// 	'href' => $podcast_settings_url,
+	// );
+	// elgg_register_menu_item('page', $params);
+	echo elgg_view('output/url', array(
 		'text' => elgg_echo('podcasts:editpodcastsettings'),
 		'href' => $podcast_settings_url,
-	);
-	elgg_register_menu_item('page', $params);
+		'class' => 'elgg-button elgg-button-action elgg-podcast-edit-button'
+	));
 }

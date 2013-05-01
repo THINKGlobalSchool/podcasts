@@ -103,7 +103,10 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 
 		// Default feed
 		$return['feed_description'] = elgg_echo('podcasts:feed:description', array($container->name));
-		$return['sidebar'] = elgg_view('podcasts/info_sidebar');
+		
+		elgg_extend_view('page/elements/owner_block', 'podcasts/info_sidebar', 1);
+
+		//$return['sidebar'] = elgg_view('podcasts/info_sidebar');
 
 	} else {
 		set_input('show_podcast_container', 1);
@@ -219,7 +222,6 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
 
 	$return['title'] = $title;
 	$return['content'] = $content;
-	$return['sidebar'] = $sidebar;
 	return $return;	
 }
 

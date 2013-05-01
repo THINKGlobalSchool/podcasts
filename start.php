@@ -49,6 +49,9 @@ function podcasts_init() {
 	// Add podcasts to owner block
 	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'podcasts_owner_block_menu');
 
+	// Modify extras menu
+	elgg_register_plugin_hook_handler('register', 'menu:extras', 'podcasts_extras_menu');
+
 	// Group options
 	add_group_tool_option('podcasts', elgg_echo('podcasts:enablepodcasts'), true);
 
@@ -164,18 +167,22 @@ function podcasts_page_handler($page) {
 			include "$pages_dir/serve.php";
 			break;
 		case 'settings':
+			if (!elgg_is_logged_in()) {
+				forward(REFERER);
+			}
 			$username = $page[1];
+
 			if (!$username) {
 				$user = elgg_get_logged_in_user_entity();
 			} else {
 				$user = get_user_by_username($username);
 			}
 
-			if ($user->canEdit()) {
+			if ($user && $user->canEdit()) {
 				elgg_set_page_owner_guid($user->guid);
 				$params = podcasts_get_user_settings_content();
 			} else {
-				forward('podcasts/settings');
+				forward('podcasts/settings/' . elgg_get_logged_in_user_entity()->username);
 			}
 			break;
 		default:
@@ -204,29 +211,53 @@ function podcasts_pagesetup($a, $b, $c) {
 		$params = array(
 			'name' => 'podcasts_settings',
 			'text' => elgg_echo('podcasts:title:usersettings'),
-			'href' => "podcasts/settings",
+			'href' => "podcasts/settings/{$user->username}",
 		);
 		elgg_register_menu_item('page', $params);
 	}
 }
 
 /**
- * Add podcasts menu item to an ownerblock
+ * Add podcasts menu item to ownerblock menu
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
  */
-function podcasts_owner_block_menu($hook, $type, $return, $params) {
+function podcasts_owner_block_menu($hook, $type, $value, $params) {
 	if (elgg_instanceof($params['entity'], 'user')) {
 		$url = "podcasts/owner/{$params['entity']->username}";
 		$item = new ElggMenuItem('podcast', elgg_echo('podcast'), $url);
-		$return[] = $item;
+		$value[] = $item;
 	} else {
 		if ($params['entity']->podcasts_enable != "no") {
 			$url = "podcasts/group/{$params['entity']->guid}/all";
 			$item = new ElggMenuItem('podcast', elgg_echo('podcasts:group'), $url);
-			$return[] = $item;
+			$value[] = $item;
 		}
 	}
 
-	return $return;
+	return $value;
+}
+
+/**
+ * Modify extras menu
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ */
+function podcasts_extras_menu($hook, $type, $value, $params) {
+	// Remove RSS
+	foreach ($value as $k => $item) {
+		if ($item->getName() == 'rss') {
+			unset($value[$k]);
+		}
+	}
+
+	return $value;
 }
 
 /**

@@ -227,7 +227,21 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 	text-decoration: underline;
 }
 
-.edit-podcast-settings-button {
-	font-size: 0.9em;
-	float: right;
+.elgg-podcast-edit-button {
+	display: block;
+	font-size: 1em;
+	margin-bottom: 20px;
+}
+
+.elgg-podcasts-subscribe-link {
+	display: block;
+	font-size: 0.8em;
+	font-weight: bold;
+	margin-bottom: 20px;
+	text-transform: uppercase;
+}
+
+.elgg-podcasts-subscribe-link span {
+ 	display: inline-block;
+ 	vertical-align: bottom;
 }

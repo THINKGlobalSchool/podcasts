@@ -44,6 +44,7 @@ $english = array(
 	'podcasts:subtitle' => 'Subtitle',
 	'podcasts:editpodcastsettings' => 'Edit Podcast Settings',
 	'podcasts:groupsettings' => 'Group Podcast Settings',
+	'podcasts:subscribe' => 'Subscribe To Podcast',
 
 	// Admin
 	'podcasts:admin:general' => 'General Settings',
