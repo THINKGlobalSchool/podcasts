@@ -10,8 +10,8 @@
  *
  */
 
-elgg_register_js('lightbox');
-elgg_register_css('lightbox');
+elgg_load_js('lightbox');
+elgg_load_css('lightbox');
 
 $help_video = elgg_normalize_url('ajax/view/podcasts/help_video');
 
