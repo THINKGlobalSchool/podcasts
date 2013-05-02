@@ -9,9 +9,7 @@
  * @link http://www.thinkglobalschool.com/
  *
  * @todo
- * - RSS feeds for subscription
- * - Prettier layout
- * - Inline instructions/info (general info, submitting to itunes, etc)
+ * - Turn off SM debugging
  * - Widgets
  * - Better uploader
  */
@@ -84,6 +82,8 @@ function podcasts_init() {
 	elgg_register_action("podcasts/usersettings", "$action_path/usersettings.php");
 	elgg_register_action("podcasts/groupsettings", "$action_path/groupsettings.php");
 
+	// Ajax Whitelist
+	elgg_register_ajax_view('podcasts/help_video');
 }
 
 /**

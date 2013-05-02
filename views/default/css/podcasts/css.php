@@ -245,3 +245,11 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
  	display: inline-block;
  	vertical-align: bottom;
 }
+
+#podcast-edit .elgg-text-help {
+	display: inline-block;
+}
+
+.elgg-podcasts-help-module {
+	width: 250px;
+}

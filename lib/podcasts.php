@@ -222,6 +222,7 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
 
 	$return['title'] = $title;
 	$return['content'] = $content;
+	$return['sidebar'] = elgg_view('podcasts/help_sidebar');
 	return $return;	
 }
 
@@ -263,7 +264,7 @@ function podcasts_prepare_form_vars($podcast = NULL) {
 	$values = array(
 		'title' => NULL,
 		'description' => NULL,
-		'access_id' => ACCESS_DEFAULT,
+		'access_id' => ACCESS_PUBLIC,
 		'tags' => NULL,
 		'container_guid' => NULL,
 		'guid' => NULL,

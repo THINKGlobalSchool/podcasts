@@ -72,6 +72,18 @@ $tags_input = elgg_view('input/tags', array(
 	'value' => $vars['tags']
 ));
 
+$access_help_link = elgg_view('output/url', array(
+	'text' => elgg_echo('podcasts:help:accesslink'),
+	'rel' => 'popup',
+	'href' => '#podcasts-access-help',
+	'class' => 'elgg-text-help',
+));
+
+$access_help_content = elgg_view_module('popup', elgg_echo('podcasts:help:accesstitle'), elgg_echo('podcasts:help:accesscontent'), array(
+	'class' => 'hidden elgg-podcasts-help-module',
+	'id' => 'podcasts-access-help'
+));
+
 $access_label = elgg_echo('access');
 $access_input = elgg_view('input/access', array(
 	'name' => 'access_id',
@@ -97,7 +109,7 @@ $content = <<<HTML
 		$description_input
 	</div>
 	<div>
-		<label for="podcast-file">$file_label</label><span class='elgg-text-help'>$file_help</span>
+		<label for="podcast-file">$file_label</label>&nbsp;<span class='elgg-text-help'>$file_help</span>
 		$file_input
 	</div>
 	<div>
@@ -107,7 +119,8 @@ $content = <<<HTML
 	$categories_input
 	<div>
 		<label for="podcast-access-id">$access_label</label>
-		$access_input
+		$access_input $access_help_link
+		$access_help_content
 	</div>
 	<div class="elgg-foot">
 		$guid_input

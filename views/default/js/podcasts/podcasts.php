@@ -21,11 +21,19 @@ elgg.podcasts.player = null;
  * Podcasts JS init
  */
 elgg.podcasts.init = function() {
+	// Init SoundManager
 	elgg.podcasts.SM = soundManager.setup({
 		url: elgg.podcasts.swfPath,
 		flashVersion: 9,
 		preferFlash: false,
 		onready: elgg.podcasts.soundManagerReady
+	});
+
+	// Help lightbox
+	$('.podcasts-help-lightbox').fancybox({
+		onClosed: function() {
+			$(this.href).empty();
+		}
 	});
 }
 
@@ -470,5 +478,15 @@ function ElggPodcastPlayer() {
 	self.strings.timing = $timing.html();
 }
 
+elgg.podcasts.helpHandler = function(hook, type, params, options) {
+	if (params.target.hasClass('elgg-podcasts-help-module')) {
+		options.my = 'left top';
+		options.at = 'left bottom';
+		return options;
+	}
+	return null;
+};
+
 // Elgg podcasts init
 elgg.register_hook_handler('init', 'system', elgg.podcasts.init);
+elgg.register_hook_handler('getOptions', 'ui.popup', elgg.podcasts.helpHandler);

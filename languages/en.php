@@ -46,6 +46,13 @@ $english = array(
 	'podcasts:groupsettings' => 'Group Podcast Settings',
 	'podcasts:subscribe' => 'Subscribe To Podcast',
 
+	// Help
+	'podcasts:help:accesslink' => 'About Podcast Access',
+	'podcasts:help:accesstitle' => 'Podcast Access Level',
+	'podcasts:help:accesscontent' => 'To allow your podcast to be subscribed to by the public, the access level needs to be \'Public\'. If you set an episode\'s access level to anything other than \'Public\'
+	the episode will not show up on subscribed feeds.',
+	'podcasts:help:whatis' => 'What is a Podcast?',
+
 	// Admin
 	'podcasts:admin:general' => 'General Settings',
 	'podcasts:admin:copyright' => 'Default copyright (for iTunes feed)',
@@ -69,7 +76,7 @@ $english = array(
 	'podcasts:error:exiftoolnotfound' => 'Error: exiftool command not found',
 	'podcasts:error:exiftoolfailed' => 'Error: exiftool command failed',
 	'podcasts:none' => 'No episodes',
-	'podcasts:filehelp' => 'MP3 or M4A',
+	'podcasts:filehelp' => '(MP3 or M4A)',
 	'podcasts:downloadfailed' => 'Podcast file download failed',
 
 	// Podcast feed
