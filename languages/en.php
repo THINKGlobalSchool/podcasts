@@ -45,8 +45,13 @@ $english = array(
 	'podcasts:editpodcastsettings' => 'Edit Podcast Settings',
 	'podcasts:groupsettings' => 'Group Podcast Settings',
 	'podcasts:subscribe' => 'Subscribe To Podcast',
+	'podcasts:filedrop' => 'Drop File Here',
+	'podcasts:replace' => '(Drop %s to replace)',
+	'podcasts:showbasicuploader' => 'Show basic uploader',
+	'podcasts:hidebasicuploader' => 'Hide basic uploader',
 
 	// Help
+	'podcasts:help:file' => 'MP3 or M4A',
 	'podcasts:help:accesslink' => 'About Podcast Access',
 	'podcasts:help:accesstitle' => 'Podcast Access Level',
 	'podcasts:help:accesscontent' => 'To allow your podcast to be subscribed to by the public, the access level needs to be \'Public\'. If you set an episode\'s access level to anything other than \'Public\'
@@ -75,8 +80,10 @@ $english = array(
 	'podcasts:error:missing' => 'One or more required fields are missing.',
 	'podcasts:error:exiftoolnotfound' => 'Error: exiftool command not found',
 	'podcasts:error:exiftoolfailed' => 'Error: exiftool command failed',
+	'podcasts:error:filetoolarge' => 'File exceeds maximum allowed upload size (%s)',
+	'podcasts:error:toomanyfiles' => 'You can only upload one file at a time',
+	'podcasts:error:uploadfailedxhr' => 'Sorry; we could not save your file. (XHR)', 
 	'podcasts:none' => 'No episodes',
-	'podcasts:filehelp' => '(MP3 or M4A)',
 	'podcasts:downloadfailed' => 'Podcast file download failed',
 
 	// Podcast feed

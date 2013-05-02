@@ -8,8 +8,13 @@
  * @copyright THINK Global School 2010 - 2013
  * @link http://www.thinkglobalschool.com/
  *
- * @todo need to check file types.. in action and in js
  */
+
+// Load JS
+elgg_load_js('elgg.podcasts.uploader');
+elgg_load_js('jquery.ui.widget');
+elgg_load_js('jquery-file-upload');
+elgg_load_js('jquery.iframe-transport');
 
 $podcast = get_entity($vars['guid']);
 $vars['entity'] = $podcast;
@@ -23,6 +28,17 @@ if ($draft_warning) {
 $action_buttons = '';
 $delete_link = '';
 
+// Dropzone label
+$file_drop = elgg_echo('podcasts:filedrop');
+$file_help = elgg_echo('podcasts:help:file');
+
+// Toggle basic uploader
+$toggle_uploader = elgg_view('output/url', array(
+	'text' => elgg_echo('podcasts:showbasicuploader'),
+	'href' => '#',
+	'class' => 'podcasts-toggle-uploader elgg-text-help'
+));
+
 if ($vars['guid']) {
 	// Add a delete button if editing
 	$delete_url = "action/podcasts/delete?guid={$vars['guid']}";
@@ -32,12 +48,26 @@ if ($vars['guid']) {
 		'class' => 'elgg-button elgg-button-delete float-alt'
 	));
 	$file_label = elgg_echo("podcasts:replacefile");
+
+	$podcastname = $podcast->originalfilename;
+	$podcastsize = podcasts_friendly_filesize($podcast->size());
+	$replace = elgg_echo('podcasts:replace', array($file_help));
+
+	$dropzone = <<<HTML
+		<span class='podcast-file-name'>$podcastname</span>
+		<span class='podcast-file-size'>$podcastsize</span>
+		<span class='podcast-file-replace'>$replace</span>
+HTML;
 } else {
+	$dropzone = <<<HTML
+		<span class='podcast-drop'>$file_drop ($file_help)</span>
+HTML;
 	$file_label = elgg_echo("podcasts:selectfile");
 }
 
 $save_button = elgg_view('input/submit', array(
 	'value' => elgg_echo('save'),
+	'id' => 'podcast-save-button',
 	'name' => 'save',
 ));
 
@@ -58,11 +88,11 @@ $description_input = elgg_view('input/longtext', array(
 	'value' => $vars['description']
 ));
 
-$file_help = elgg_echo('podcasts:filehelp');
 $file_input = elgg_view('input/file', array(
 	'name' => 'upload',
 	'id' => 'podcast-file',
-	'accept' => 'audio/*'
+	'accept' => 'audio/*',
+	'class' => 'hidden'
 ));
 
 $tags_label = elgg_echo('tags');
@@ -109,8 +139,14 @@ $content = <<<HTML
 		$description_input
 	</div>
 	<div>
-		<label for="podcast-file">$file_label</label>&nbsp;<span class='elgg-text-help'>$file_help</span>
+		<div id='podcast-dropzone'>
+			$dropzone
+		</div>
+		<span id='podcast-basic-uploader' class='hidden'>
+			<label for="podcast-file">$file_label</label>&nbsp;<span class='elgg-text-help'>($file_help)</span>
+		</span>
 		$file_input
+		$toggle_uploader
 	</div>
 	<div>
 		<label for="podcast-tags">$tags_label</label>
@@ -125,7 +161,6 @@ $content = <<<HTML
 	<div class="elgg-foot">
 		$guid_input
 		$container_guid_input
-
 		$action_buttons
 	</div>
 HTML;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg Podcasts soundmanager2 JS simplecache view
+ * Elgg Podcasts jquery iframe transport simplecache view
  *
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -11,9 +11,6 @@
  */
 $js_path = elgg_get_config('path');
 
-/* Debug script
-$js_path = "{$js_path}mod/podcasts/vendors/soundmanager2/soundmanager2.js";
-*/
-$js_path = "{$js_path}mod/podcasts/vendors/soundmanager2/soundmanager2-nodebug-jsmin.js";
+$iframe_transport = "{$js_path}mod/podcasts/vendors/jquery-file-upload/jquery.iframe-transport.js";
 
-include $js_path;
+include $iframe_transport;

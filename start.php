@@ -9,7 +9,6 @@
  * @link http://www.thinkglobalschool.com/
  *
  * @todo
- * - Turn off SM debugging
  * - Widgets
  * - Better uploader
  */
@@ -31,6 +30,11 @@ function podcasts_init() {
 	elgg_register_simplecache_view('js/podcasts/podcasts');
 	elgg_register_js('elgg.podcasts', $js);
 
+	// Register podcasts uploader JS
+	$js = elgg_get_simplecache_url('js', 'podcasts/uploader');
+	elgg_register_simplecache_view('js/podcasts/uploader');
+	elgg_register_js('elgg.podcasts.uploader', $js);
+
 	// Register podcasts JS
 	$js = elgg_get_simplecache_url('js', 'soundmanager2');
 	elgg_register_simplecache_view('js/soundmanager2');
@@ -40,6 +44,21 @@ function podcasts_init() {
 	$css = elgg_get_simplecache_url('css', 'podcasts/css');
 	elgg_register_simplecache_view('css/podcasts/css');
 	elgg_register_css('elgg.podcasts', $css);
+
+	// Register jquery ui widget (for jquery file upload)
+	$js = elgg_get_simplecache_url('js', 'jquery_ui_widget');
+	elgg_register_simplecache_view('js/jquery_ui_widget');
+	elgg_register_js('jquery.ui.widget', $js);
+	
+	// Register JS File Upload
+	$js = elgg_get_simplecache_url('js', 'jquery_file_upload');
+	elgg_register_simplecache_view('js/jquery_file_upload');
+	elgg_register_js('jquery-file-upload', $js);
+
+	// Register JS jquery.iframe-transport (for jquery-file-upload)
+	$js = elgg_get_simplecache_url('js', 'jquery_iframe_transport');
+	elgg_register_simplecache_view('js/jquery_iframe_transport');
+	elgg_register_js('jquery.iframe-transport', $js);
 
 	// Pagesetup event handler
 	elgg_register_event_handler('pagesetup','system','podcasts_pagesetup');

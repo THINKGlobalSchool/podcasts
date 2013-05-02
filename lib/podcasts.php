@@ -485,6 +485,55 @@ function podcasts_populate_file_info($podcast) {
 }
 
 /**
+ * Get file mime type using exiftool
+ *
+ * @param string $filename
+ *
+ * @return mixed
+ */
+function podcasts_get_mime_type($filename) {
+	// Get exiftool command path
+	$cmd_path = elgg_get_plugin_setting('podcasts_exiftool_root', 'podcasts');
+
+	// Set up exif tool command
+	$command = $cmd_path . "exiftool -S -MIMEType -n \"$filename\"";
+	$output = array();
+	$return = 0;
+
+	// Run command
+	exec($command, $output, $return);
+
+	// If we have valid output..
+	if ($return == 0 && count($output) >= 1) {
+		$mimetype = $output[0]; // This will be something like: MIMEType: audio/xyz
+		return trim(substr($mimetype, strpos($mimetype, ":") + 1));
+	} 
+	
+	// Return value
+	return $return;
+}
+
+/**
+ * Get friendly filesize string
+ *
+ * @param int $size
+ *
+ * @return string
+ */
+function podcasts_friendly_filesize($size) {
+    if (!is_numeric($size)) {
+        return '';
+    }
+    if ($size >= 1000000000) {
+        return number_format(($size / 1000000000), 2) . ' GB';
+    }
+    if ($size >= 1000000) {
+        return number_format(($size / 1000000), 2) . ' MB';
+    }
+    return number_format(($size / 1000), 2) . ' KB';
+}
+
+/**
  * Convert number of seconds to HH:MM:SS time format
  *
  * @param int|float $seconds

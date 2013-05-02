@@ -24,6 +24,7 @@ if ($guid) {
 		register_error(elgg_echo('podcasts:error:notfound'));
 		forward(get_input('forward', REFERER));
 	}
+	$new_podcast = FALSE;
 } else {
 	$podcast = new ElggPodcast();
 
@@ -32,6 +33,7 @@ if ($guid) {
 		$error = TRUE;
 		register_error(elgg_echo('podcasts:error:missing:file'));
 	}
+	$new_podcast = TRUE;
 }
 
 // Check required fields
@@ -91,7 +93,7 @@ try {
 	}
 } catch (Exception $ex) {
 	// At this point the podcast entity could have been saved.. clean it up we don't want missing metadata
-	if ($podcast->guid) { // check first..
+	if ($new_podcast && $podcast->guid) { // check first..
 		$podcast->delete();
 	}
 	register_error($ex->getMessage());
@@ -101,4 +103,8 @@ if (!$fwd) {
 	$fwd = REFERER;
 }
 
+// Check XHR
+if (elgg_is_xhr()) {
+	echo $delete;
+}
 forward($fwd);

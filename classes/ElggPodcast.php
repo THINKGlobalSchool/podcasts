@@ -38,25 +38,31 @@ class ElggPodcast extends ElggFile {
 
 		// New Podcast File Data
 		if ($data) {
+			$this->simpletype = "audio";
+
+			// Get mimetype
+			$mime_type = ElggPodcast::detectMimeType($data['tmp_name'], $data['type']);
+
+			// Check for valid mime type
+			if (ElggPodcast::checkValidMimeType($mime_type)) {
+				// Set it
+				$this->setMimeType($mime_type);
+			} else {
+				// Invalid, fail
+				$ex = elgg_echo('InvalidPodcastFileException:InvalidMimeType', array($mime_type));
+				throw new InvalidPodcastFileException($ex);
+			}
+
 			// Remove old file if it exists
 			$old_file = $this->getFilenameOnFilestore();
 			if (file_exists($old_file) && !is_dir($old_file)) {
 				unlink($old_file);
 			}
 
-			$this->simpletype = "audio";
-
-			$mime_type = ElggPodcast::detectMimeType($data['tmp_name'], $data['type']);
-
-			if (ElggPodcast::checkValidMimeType($mime_type)) {
-				$this->setMimeType($mime_type);
-			} else {
-				$ex = elgg_echo('InvalidPodcastFileException:InvalidMimeType', array($mime_type));
-				throw new InvalidPodcastFileException($ex);
-			}
-
+			// Save the file data
 			$this->savePodcastFile($data);
 
+			// Populate metadata
 			$this->populatePodcastMetadata();
 		}
 
@@ -76,6 +82,7 @@ class ElggPodcast extends ElggFile {
 		} else {
 			// Couldn't delete the ElggFile
 			$filename = $this->getFilenameOnFilestore($file);
+
 			$success = true;
 
 			// Check for a directory this time, and try again
@@ -130,6 +137,49 @@ class ElggPodcast extends ElggFile {
 	public function getFileExtension() {
 		elgg_load_library('elgg:podcasts');
 		return podcasts_get_mime_type_extension($this->getMimeType());
+	}
+
+	/**
+	 * Override for ElggFile::detectMimetype
+	 * - Detects mime types using exiftool
+	 *
+	 * @param mixed $file    The full path of the file to check. For uploaded files, use tmp_name.
+	 * @param mixed $default A default. Useful to pass what the browser thinks it is.
+	 * @since 1.7.12
+	 *
+	 * @note If $file is provided, this may be called statically
+	 *
+	 * @return mixed Detected type on success, false on failure.
+	 */
+	public function detectMimeType($file = null, $default = null) {
+		if (!$file) {
+			if (isset($this) && $this->filename) {
+				$file = $this->filename;
+			} else {
+				return false;
+			}
+		}
+
+		// Load podcasts library
+		elgg_load_library('elgg:podcasts');
+		$mime = podcasts_get_mime_type($file);
+
+		if (!is_string($mime)) {
+			if ($mime == 127) {
+				$ex = elgg_echo('podcasts:error:exiftoolnotfound');
+				throw new PodcastMetadataException($ex);
+			} else if ($mime > 0) {
+				$ex = elgg_echo('podcasts:error:exiftoolfailed');
+				throw new PodcastMetadataException($ex);
+			}
+		}
+
+		// default
+		if (empty($mime)) {
+			return $default;
+		}
+
+		return $mime;
 	}
 
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg Podcasts soundmanager2 JS simplecache view
+ * Elgg Podcasts jquery file upload simplecache view
  *
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
@@ -11,9 +11,6 @@
  */
 $js_path = elgg_get_config('path');
 
-/* Debug script
-$js_path = "{$js_path}mod/podcasts/vendors/soundmanager2/soundmanager2.js";
-*/
-$js_path = "{$js_path}mod/podcasts/vendors/soundmanager2/soundmanager2-nodebug-jsmin.js";
+$fileupload = "{$js_path}mod/podcasts/vendors/jquery-file-upload/jquery.fileupload.js";
 
-include $js_path;
+include $fileupload;
