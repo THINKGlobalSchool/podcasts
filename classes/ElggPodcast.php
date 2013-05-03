@@ -8,9 +8,6 @@
  * @copyright THINK Global School 2010 - 2013
  * @link http://www.thinkglobalschool.com/
  *
- * @todo
- * - Get audio length
- * - anything else needed to playback this file
  */
 
 class ElggPodcast extends ElggFile {

@@ -304,3 +304,13 @@ div#podcast-dropzone .podcast-file-replace {
 .podcasts-toggle-uploader {
 	width: 100%;
 }
+
+#podcast-upload-dialog {
+	display: none;
+	height: 100px;
+}
+
+/* Fix stripe in overlay */
+.ui-widget-overlay { 
+	background: #000000 !important;
+}

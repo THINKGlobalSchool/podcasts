@@ -10,7 +10,6 @@
  *
  * @todo
  * - Widgets
- * - Better uploader
  */
 
 elgg_register_event_handler('init', 'system', 'podcasts_init');
@@ -44,6 +43,11 @@ function podcasts_init() {
 	$css = elgg_get_simplecache_url('css', 'podcasts/css');
 	elgg_register_simplecache_view('css/podcasts/css');
 	elgg_register_css('elgg.podcasts', $css);
+
+	// Register jquery ui css
+	$css = elgg_get_simplecache_url('css', 'jquery.ui_1.8.16');
+	elgg_register_simplecache_view('css/jquery.ui_1.8.16');
+	elgg_register_css('podcasts-jquery-ui', $css);
 
 	// Register jquery ui widget (for jquery file upload)
 	$js = elgg_get_simplecache_url('js', 'jquery_ui_widget');

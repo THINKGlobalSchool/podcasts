@@ -64,7 +64,8 @@ elgg.podcasts.uploader.initFileUploader = function() {
 				'audio/x-m4a', 
 				'application/octet-stream', // Allowing this.. will check for valid type in upload action
 				'audio/m4a', 
-				'audio/mp4'
+				'audio/mp4',
+				'audio/mp3'
 			];
 
 			if ($.inArray(data.files[0].type, valid_types) === -1) {
@@ -100,7 +101,17 @@ elgg.podcasts.uploader.initFileUploader = function() {
 		dragover: function (event, data) {
 			// Add fancy dragover class
 			$('#podcast-dropzone').addClass('podcast-dropzone-dragover');
-		}
+		},
+		progress: function (event, data) {
+			// Update progress for context
+			var progress = parseInt(data.loaded / data.total * 100, 10);	
+			$("#podcast-upload-progress").progressbar("option", "value", progress);
+			$('.ui-dialog-title').html(elgg.echo('podcasts:uploading').replace('$', progress + '%'));
+    	},
+    	done: function(event, data) {
+    		// Prevent the 'are you sure you want to leave' popup
+			window.onbeforeunload = function() {};
+    	}
 	});
 }
 
@@ -118,29 +129,63 @@ elgg.podcasts.uploader.saveClick = function(event) {
 		return true;
 	}
 
+	// Make sure tinymce inputs have set the text
+	if (typeof(tinyMCE) != 'undefined') {
+		tinyMCE.triggerSave();
+	}
+
+	var valid = true;
+
+	// Make sure we've got a file
+	if (!data) {
+		elgg.register_error(elgg.echo('podcasts:error:missing:file'));
+		valid = false;
+	}
+
+	// Check for title
+	if (!$('#podcast-title').val()) {
+		elgg.register_error(elgg.echo('podcasts:error:missing:title'));	
+		valid = false;
+	}
+
+	// Check for description
+	if (!$('#podcast-description').val()) {
+		elgg.register_error(elgg.echo('podcasts:error:missing:description'));
+		valid = false;
+	}
+
+	// Missing info.. return 
+	if (!valid) {
+		return false;
+	}
+
 	// Store the button
 	var $button = $(this);
 
 	// Show a little spinner
 	$(this).replaceWith("<div id='podcast-upload-spinner' class='elgg-ajax-loader'></div>");
 
-	// Make sure tinymce inputs have set the text
-	if (typeof(tinyMCE) != 'undefined') {
-		tinyMCE.triggerSave();
-	}
+	$("#podcast-upload-dialog").dialog({
+		modal: true,
+		draggable: false,
+		resizable: false,
+		closeOnEscape: false,
+		title: elgg.echo('podcasts:uploading'),
+		height: 85,
+		open: function(event, ui) {
+			$(".ui-dialog-titlebar-close").remove();
+			$("#podcast-upload-progress").progressbar({ value: 0 });
+			$('.ui-dialog-title').html(elgg.echo('podcasts:uploading').replace('$', '0%'));
+		}
+	});
 
-	// Returns an object, with these fancy callbacks
+	// Send files with promise
 	var jqXHR = $('input#podcast-file').fileupload('send',{files: data.files})
-		.done(function (result, textStatus, jqXHR) {
+		.success(function (result, textStatus, jqXHR) {
 			// Success/done check elgg status's
 			if (result.status != -1) {
 				// Display success
 				elgg.system_message(result.system_messages.success);
-
-				// Prevent the 'are you sure you want to leave' popup
-				window.onbeforeunload = function() {};
-
-				// Good to go, forward to output
 				window.location = result.output;
 			} else {
 				// There was an error, display it
@@ -150,18 +195,15 @@ elgg.podcasts.uploader.saveClick = function(event) {
 				$('#podcast-upload-spinner').replaceWith($button);
 			}
 		})
-    	.fail(function (jqXHR, textStatus, errorThrown) {
+    	.error(function (jqXHR, textStatus, errorThrown) {
 			// If we're here, there was an error making the request
 			// or we got some screwy response.. display an error and log it for debugging
 			elgg.register_error(elgg.echo('podcasts:error:uploadfailedxhr'));
-			console.log(errorThrown);
-			console.log(textStatus);
-			console.log(jqXHR);
 
 			// Enable the button
 			$('#podcast-upload-spinner').replaceWith($button);
 		})
-    	.always(function (result, textStatus, jqXHR) {
+    	.complete(function (result, textStatus, jqXHR) {
 			// Just keeping this here for future use/testing
 		});
 
@@ -197,10 +239,10 @@ elgg.podcasts.uploader.toggle = function(event) {
  * @return string
  */
 elgg.podcasts.uploader.bytesToSize = function(bytes) {
-    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes == 0) return 'n/a';
-    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+	var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+	if (bytes == 0) return 'n/a';
+	var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+	return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 };
 
 /**

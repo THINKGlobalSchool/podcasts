@@ -105,6 +105,6 @@ if (!$fwd) {
 
 // Check XHR
 if (elgg_is_xhr()) {
-	echo $delete;
+	echo $fwd;
 }
 forward($fwd);

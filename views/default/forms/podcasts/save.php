@@ -16,6 +16,9 @@ elgg_load_js('jquery.ui.widget');
 elgg_load_js('jquery-file-upload');
 elgg_load_js('jquery.iframe-transport');
 
+// Css
+elgg_load_css('podcasts-jquery-ui');
+
 $podcast = get_entity($vars['guid']);
 $vars['entity'] = $podcast;
 
@@ -162,6 +165,9 @@ $content = <<<HTML
 		$guid_input
 		$container_guid_input
 		$action_buttons
+	</div>
+	<div id='podcast-upload-dialog'>
+		<div id='podcast-upload-progress'></div>
 	</div>
 HTML;
 

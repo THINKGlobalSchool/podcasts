@@ -49,6 +49,7 @@ $english = array(
 	'podcasts:replace' => '(Drop %s to replace)',
 	'podcasts:showbasicuploader' => 'Show basic uploader',
 	'podcasts:hidebasicuploader' => 'Hide basic uploader',
+	'podcasts:uploading' => 'Uploading $...',
 
 	// Help
 	'podcasts:help:file' => 'MP3 or M4A',
