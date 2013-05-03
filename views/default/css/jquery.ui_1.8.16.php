@@ -13,4 +13,10 @@
 $css_path = elgg_get_config('path');
 $css_path = "{$css_path}mod/podcasts/vendors/jquery-ui-css/jquery-ui-1.8.16.css";
 
+$graphics_path = elgg_get_site_url() . 'mod/podcasts/graphics/jquery-ui/';
+
+ob_start();
 include $css_path;
+$contents = ob_get_clean();
+$contents = str_replace('images/', $graphics_path, $contents);
+echo $contents; 

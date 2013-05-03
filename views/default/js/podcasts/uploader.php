@@ -110,7 +110,7 @@ elgg.podcasts.uploader.initFileUploader = function() {
     	},
     	done: function(event, data) {
     		// Prevent the 'are you sure you want to leave' popup
-			window.onbeforeunload = function() {};
+    		window.onbeforeunload = function() {};
     	}
 	});
 }
