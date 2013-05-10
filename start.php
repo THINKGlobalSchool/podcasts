@@ -95,8 +95,8 @@ function podcasts_init() {
 	// Register for view plugin hook to override rss page/default view
 	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handelr');
 
-	// Extend group settings
-	elgg_extend_view('groups/edit', 'forms/podcasts/groupsettings', 1000);
+	// Extend object summary
+	elgg_extend_view('object/summary/extend', 'podcasts/summary');
 
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';
@@ -113,16 +113,18 @@ function podcasts_init() {
  * Podcasts page handler
  *
  * URL layout
- *  All podcasts:          podcasts/all
- *  User's podcastss:      podcasts/owner/<username>
- *  Friends' podcasts:     podcasts/friends/<username>
- *  View podcast:          podcasts/view/<guid>/<title>
- *  New podcast:           podcasts/add/<guid>
- *  Edit podcast:          podcasts/edit/<guid>/<revision>
- *  Group podcasts:        podcasts/group/<guid>/all
- *  Download podcast:      podcasts/download/<guid>
- *  Serve podcast:         podcasts/serve/<guid>
- *  User podcast settings: podcasts/settings
+ *  All podcasts:            podcasts/all
+ *  All episodes:            podcasts/episodes/all
+ *  User's podcastss:        podcasts/owner/<username>
+ *  Friends' podcasts:       podcasts/friends/<username>
+ *  View podcast:            podcasts/view/<guid>/<title>
+ *  New podcast:             podcasts/add/<guid>
+ *  Edit podcast:            podcasts/edit/<guid>/<revision>
+ *  Group podcasts:          podcasts/group/<guid>/all
+ *  Group podcast settings:  podcasts/group/<guid>/edit
+ *  Download podcast:        podcasts/download/<guid>
+ *  Serve podcast:           podcasts/serve/<guid>
+ *  User podcast settings:   podcasts/settings
  *
  * Title is ignored
  *
@@ -174,12 +176,25 @@ function podcasts_page_handler($page) {
 		case 'group':
 			if ($page[2] == 'all') {
 				$params = podcasts_get_page_content_list($page[1]);
-			} else {
-				$params = podcasts_get_page_content_archive($page[1], $page[3], $page[4]);
+			} else if ($page[2] == 'edit') {
+				$page_owner = get_entity($page[1]);
+				elgg_pop_breadcrumb();
+				elgg_push_breadcrumb(elgg_echo('groups'), 'groups/all');
+				elgg_push_breadcrumb($page_owner->name, $page_owner->getURL());
+				elgg_push_breadcrumb(elgg_echo('podcasts:editpodcastsettings'));
+				$params = elgg_set_page_owner_guid($page[1]);
+				$params = podcasts_get_settings_content();
 			}
 			break;
 		case 'all':
-			$params = podcasts_get_page_content_list();
+			$params = podcasts_get_page_content_list_podcasts();
+			break;
+		case 'episodes':
+			if ($page[1] == 'all') {
+				$params = podcasts_get_page_content_list();
+			} else {
+				forward('podcasts');
+			}
 			break;
 		case 'download':
 			set_input('guid', $page[1]);
@@ -201,9 +216,13 @@ function podcasts_page_handler($page) {
 				$user = get_user_by_username($username);
 			}
 
+			elgg_pop_breadcrumb();
+			elgg_push_breadcrumb(elgg_echo('settings'), "settings/user/$user->username");
+			elgg_push_breadcrumb(elgg_echo('podcasts:title:usersettings'));
+
 			if ($user && $user->canEdit()) {
 				elgg_set_page_owner_guid($user->guid);
-				$params = podcasts_get_user_settings_content();
+				$params = podcasts_get_settings_content();
 			} else {
 				forward('podcasts/settings/' . elgg_get_logged_in_user_entity()->username);
 			}
@@ -341,19 +360,51 @@ function podcasts_notify_message($hook, $type, $value, $params) {
 function podcasts_setup_entity_menu($hook, $type, $value, $params) {
 	$entity = $params['entity'];
 	
-	if (!elgg_instanceof($entity, 'object', 'podcast')) {
-		return $value;
-	}
-	
-	// Download link
-	$options = array(
-		'name' => 'podcasts_download',
-		'text' => elgg_echo('podcasts:download'),
-		'encode_text' => false,
-		'href' => $entity->getDownloadURL(),
-	);
+	if (elgg_instanceof($entity, 'object', 'podcast')) {
+		// Download link
+		$options = array(
+			'name' => 'podcasts_download',
+			'text' => elgg_echo('podcasts:download'),
+			'encode_text' => FALSE,
+			'href' => $entity->getDownloadURL(),
+		);
+		$value[] = ElggMenuItem::factory($options);
+	} else if ((elgg_instanceof($entity, 'user') || elgg_instanceof($entity, 'group')) && elgg_in_context('podcasts')) {
+		// Clear menu
+		$value = array();
 
-	$value[] = ElggMenuItem::factory($options);
+		// Episode counts
+		$options = array(
+			'name' => 'episodes_count',
+			'text' => elgg_echo('podcasts:episodes', array($entity->episode_count)),
+			'encode_text' => FALSE,
+			'href' => FALSE,
+		);
+		$value[] = ElggMenuItem::factory($options);
+
+		// Subscribe link
+		if (elgg_instanceof($entity, 'group')) {
+			$url = "podcasts/group/{$entity->guid}/all?view=rss";
+		} else {
+			$url = "podcasts/owner/{$entity->username}?view=rss";
+		}
+
+		$url = elgg_normalize_url($url);
+
+		$subscribe = elgg_view('output/url', array(
+			'name' => 'podcast_rss',
+			'text' => elgg_view_icon('rss'),
+			'href' => $url,
+		));
+
+		$options = array(
+			'name' => 'subscribe_link',
+			'text' => $subscribe,
+			'encode_text' => FALSE,
+			'href' => FALSE,
+		);
+		$value[] = ElggMenuItem::factory($options);
+	}	
 
 	return $value;
 }
@@ -370,19 +421,49 @@ function podcasts_setup_entity_menu($hook, $type, $value, $params) {
  */
 function podcasts_setup_filter_menu($hook, $type, $value, $params) {
 	if (elgg_in_context('podcasts')) {
-		foreach ($value as $item) {
-			if ($item->getName() == 'all') {
-				$item->setText(elgg_echo('podcasts:filter:allepisodes'));
-			}
 
-			if ($item->getName() == 'mine') {
-				$item->setText(elgg_echo('podcasts:filter:mypodcast'));
-			}
+		$value = array();
 
-			if ($item->getName() == 'friend') {
-				$item->setText(elgg_echo('podcasts:filter:friendsepisodes'));
-			}
-		}
+
+		// Add all podcasts tab
+		$options = array(
+			'name' => 'all_podcasts',
+			'text' => elgg_echo('podcasts:filter:allpodcasts'),
+			'href' => "podcasts/all",
+			'priority' => 100,
+		);
+
+		$value[] = ElggMenuItem::factory($options);
+
+		// Add all episodes tab
+		$options = array(
+			'name' => 'all_episodes',
+			'text' => elgg_echo('podcasts:filter:allepisodes'),
+			'href' => "podcasts/episodes/all",
+			'priority' => 200,
+		);
+
+		$value[] = ElggMenuItem::factory($options);
+
+		// Add my podcast tab
+		$options = array(
+			'name' => 'mine',
+			'text' => elgg_echo('podcasts:filter:mypodcast'),
+			'href' => "podcasts/owner/" . elgg_get_logged_in_user_entity()->username,
+			'priority' => 300,
+		);
+
+		$value[] = ElggMenuItem::factory($options);
+
+		// Add my podcast tab
+		$options = array(
+			'name' => 'friend',
+			'text' => elgg_echo('podcasts:filter:friendsepisodes'),
+			'href' => "podcasts/friends/" . elgg_get_logged_in_user_entity()->username,
+			'priority' => 400,
+		);
+
+		$value[] = ElggMenuItem::factory($options);
 	}
 	return $value;
 }

@@ -19,7 +19,8 @@ $english = array(
 
 	// Titles
 	'podcasts:title:owner_podcasts' => '%s\'s Podcast',
-	'podcasts:title:all_podcasts' => 'All site podcast episodes',
+	'podcasts:title:allpodcasts' => 'All site podcasts',
+	'podcasts:title:allpodcastepisodes' => 'All site podcast episodes',
 	'podcasts:title:friends' => 'Friends\' podcast episodes',
 	'podcasts:title:usersettings' => 'Podcast Settings',
 
@@ -31,6 +32,7 @@ $english = array(
 	'podcasts:filter:allepisodes' => 'All episodes',
 	'podcasts:filter:mypodcast' => 'My Podcast',
 	'podcasts:filter:friendsepisodes' => 'Friends\' episodes',
+	'podcasts:filter:allpodcasts' => 'All podcasts',
 	'podcasts:add' => 'Upload a new episode',
 	'podcasts:edit' => 'Edit podcast',
 	'podcasts:selectfile' => 'Select File',
@@ -50,6 +52,7 @@ $english = array(
 	'podcasts:showbasicuploader' => 'Show basic uploader',
 	'podcasts:hidebasicuploader' => 'Hide basic uploader',
 	'podcasts:uploading' => 'Uploading $...',
+	'podcasts:episodes' => 'Episodes: %s',
 
 	// Help
 	'podcasts:help:file' => 'MP3 or M4A',

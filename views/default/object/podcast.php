@@ -18,7 +18,6 @@ if (!elgg_instanceof($podcast, 'object', 'podcast')) {
 }
 
 $owner = $podcast->getOwnerEntity();
-$container = $podcast->getContainerEntity();
 
 $owner_url = "podcasts/owner/{$owner->username}";
 $owner_name = $owner->name;
@@ -78,7 +77,7 @@ $podcast_title = elgg_view('output/url', array(
 if ($full) {
 	$body = elgg_view('output/longtext', array(
 		'value' => $podcast->description,
-		'class' => 'elgg-podcast-description'
+		'class' => 'elgg-podcast-episode-description'
 	));
 
 	$body .= $player;
@@ -97,7 +96,7 @@ if ($full) {
 		'summary' => $summary,
 		'icon' => $owner_icon,
 		'body' => $body,
-		'class' => 'elgg-podcast',
+		'class' => 'elgg-podcast-episode',
 		'title' => 'sd',
 	));
 } else {
@@ -112,31 +111,13 @@ if ($full) {
 	$params = $params + $vars;
 	$list_body = elgg_view('object/elements/summary', $params);
 
-	if (get_input('show_podcast_container')) {
-		if (elgg_instanceof($container, 'group')) {
-			$container = $podcast->getContainerEntity();
-			$owner_url = "podcasts/group/{$container->guid}/all";
-			$owner_name = $container->name;
-		}
-
-		$podcasts_link = elgg_view('output/url', array(
-			'href' => $owner_url,
-			'text' => elgg_echo('podcasts:title:owner_podcasts', array($owner_name)),
-			'is_trusted' => true,
-		));
-
-		$body .= "<h3 class='elgg-podcast-title'>" . $podcasts_link . "</h3>";
-	
-		$body .= "<h2 class='elgg-podcast-title'>" . $podcast_title . "</h2>";
-	} else {
-		$body .= "<h3 class='elgg-podcast-title'>" . $podcast_title . "</h3>";
-	}
+	$body .= "<h3 class='elgg-podcast-title'>" . $podcast_title . "</h3>";
 
 	$body .= elgg_view_image_block($owner_icon, $list_body);
 
 	$body .= elgg_view('output/longtext', array(
 		'value' => elgg_get_excerpt($podcast->description),
-		'class' => 'elgg-podcast-description'
+		'class' => 'elgg-podcast-episode-description'
 	));
 
 	$body .= $player;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Elgg Podcasts Custom List View
+ * Elgg Podcasts Custom Episode List View
  * - Modified version of page/components/list
  *
  * @package Podcasts
@@ -9,7 +9,7 @@
  * @copyright THINK Global School 2010 - 2013
  * @link http://www.thinkglobalschool.com/
  *
- * @uses $vars['items']       Array of ElggEntity or ElggAnnotation objects
+ * @uses $vars['items']       Array of ElggEntity
  * @uses $vars['offset']      Index of the first list item in complete list
  * @uses $vars['limit']       Number of items per page. Only used as input to pagination.
  * @uses $vars['count']       Number of items in the complete list
@@ -30,14 +30,12 @@ $pagination = elgg_extract('pagination', $vars, true);
 $offset_key = elgg_extract('offset_key', $vars, 'offset');
 $position = elgg_extract('position', $vars, 'after');
 
-$list_class = 'elgg-list-podcasts';
 if (isset($vars['list_class'])) {
-	$list_class = "$list_class {$vars['list_class']}";
+	$list_class = $vars['list_class'];
 }
 
-$item_class = 'elgg-podcast';
 if (isset($vars['item_class'])) {
-	$item_class = "$item_class {$vars['item_class']}";
+	$item_class = $vars['item_class'];
 }
 
 $html = "";
@@ -56,7 +54,11 @@ if ($pagination && $count) {
 if (is_array($items) && count($items) > 0) {
 	$html .= "<ul class=\"$list_class\">";
 	foreach ($items as $item) {
-		$li = elgg_view_list_item($item, $vars);
+		if (elgg_instanceof($item, 'user') || elgg_instanceof($item, 'group')) {
+			$li = elgg_view('podcasts/podcast', array('entity' => $item));
+		} else {
+			$li = elgg_view_list_item($item, $vars);
+		}
 		if ($li) {
 			if (elgg_instanceof($item)) {
 				$id = "elgg-{$item->getType()}-{$item->getGUID()}";

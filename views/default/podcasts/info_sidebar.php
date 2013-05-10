@@ -23,7 +23,7 @@ if (elgg_instanceof($page_owner, 'group')) {
 		$podcast_description = $group_podcast_settings['description'];
 	}
 
-	$podcast_settings_url = "groups/edit/{$page_owner->guid}#other";
+	$podcast_settings_url = "podcasts/group/{$page_owner->guid}/edit";
 } 
 // User Podcast info
 else if (elgg_instanceof($page_owner, 'user')) {
@@ -58,12 +58,6 @@ echo elgg_view('output/url', array(
 ));
 
 if ($page_owner && $page_owner->canEdit()) {
-	// $params = array(
-	// 	'name' => 'podcasts_settings',
-	// 	'text' => elgg_echo('podcasts:editpodcastsettings'),
-	// 	'href' => $podcast_settings_url,
-	// );
-	// elgg_register_menu_item('page', $params);
 	echo elgg_view('output/url', array(
 		'text' => elgg_echo('podcasts:editpodcastsettings'),
 		'href' => $podcast_settings_url,

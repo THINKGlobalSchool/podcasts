@@ -58,7 +58,7 @@ function podcasts_get_page_content_view($guid = NULL) {
 }
 
 /**
- * Get page components to list a user's or all podcasts.
+ * Get page components to list a user's or all podcast episodes.
  *
  * @param int $container_guid The GUID of the page owner or NULL for all podcasts
  *
@@ -68,12 +68,14 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 
 	$return = array();
 
-	$return['filter_context'] = $container_guid ? 'mine' : 'all';
+	$return['filter_context'] = $container_guid ? 'mine' : 'all_episodes';
 
 	$options = array(
 		'type' => 'object',
 		'subtype' => 'podcast',
 		'full_view' => false,
+		'podcast_list_class' => 'elgg-list-podcast-episodes',
+		'podcast_item_class' => 'elgg-podcast-episode'
 	);
 
 	$current_user = elgg_get_logged_in_user_entity();
@@ -111,14 +113,61 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 	} else {
 		set_input('show_podcast_container', 1);
 		$return['filter_context'] = 'all';
-		$return['title'] = elgg_echo('podcasts:title:all_podcasts');
+		$return['title'] = elgg_echo('podcasts:title:allpodcastepisodes');
 		elgg_pop_breadcrumb();
-		elgg_push_breadcrumb(elgg_echo('podcasts'));
+		elgg_push_breadcrumb(elgg_echo('podcasts'), 'podcasts/all');
+		elgg_push_breadcrumb(elgg_echo('podcasts:filter:allepisodes'));
 	}
 
 	elgg_register_title_button();
 
-	$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
+	$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_list');
+
+	return $return;
+}
+
+/**
+ * Get page components to list all site podcasts with at least one episode
+ *
+ * @param int $container_guid The GUID of the page owner or NULL for all podcasts
+ *
+ * @return array
+ */
+function podcasts_get_page_content_list_podcasts($container_guid = NULL) {
+	$return = array();
+
+	$return['filter_context'] = 'all_podcasts';
+
+	// Options to grab users/groups
+	$options = array(
+		'types' => array('user', 'group'),
+		'full_view' => false,
+		'podcast_list_class' => 'elgg-list',
+		'podcast_item_class' => 'elgg-item elgg-podcast',
+	);
+
+	// Build query to get users/groups with at least one podcast entity
+	$dbprefix = elgg_get_config('dbprefix');
+	
+	$subtype_id = get_subtype_id('object', 'podcast');
+
+	$options['selects'][] = "(SELECT COUNT(*) from {$dbprefix}entities es where es.container_guid = e.guid AND ((es.type = 'object' AND es.subtype IN ({$subtype_id})))) as episode_count";
+	$options['joins'][] = "JOIN {$dbprefix}users_entity as ue";
+	$options['joins'][] = "JOIN {$dbprefix}groups_entity as ge";
+	$options['wheres'][] = "ue.banned = 'no'";
+	$options['wheres'][] = "(e.guid = ue.guid OR e.guid = ge.guid)";
+	$options['wheres'][] = "(exists (SELECT  1 FROM {$dbprefix}entities p WHERE p.container_guid = e.guid AND (p.type = 'object' AND p.subtype IN ({$subtype_id}))))";
+	$options['order_by'] = "episode_count DESC";
+	$options['group_by'] = 'e.guid HAVING episode_count >= 1';
+
+	// Clear current users entity cache
+	_elgg_invalidate_cache_for_entity(elgg_get_logged_in_user_guid());
+
+	$return['content'] = elgg_list_entities($options, 'elgg_get_entities', 'podcasts_list');
+
+	elgg_register_title_button();
+
+	$return['title'] = elgg_echo('podcasts:title:allpodcasts');
 
 	return $return;
 }
@@ -158,13 +207,15 @@ function podcasts_get_page_content_friends($user_guid) {
 			'type' => 'object',
 			'subtype' => 'podcast',
 			'full_view' => FALSE,
+			'podcast_list_class' => 'elgg-list-podcast-episodes',
+			'podcast_item_class' => 'elgg-podcast-episode'
 		);
 
 		foreach ($friends as $friend) {
 			$options['container_guids'][] = $friend->getGUID();
 		}
 
-		$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_view_entity_list');
+		$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_list');
 	}
 
 
@@ -227,22 +278,21 @@ function podcasts_get_page_content_edit($page, $guid = 0) {
 }
 
 /**
- * Build content for user settings
+ * Build content for podcast settings
  *
  * @return array
  */
-function podcasts_get_user_settings_content() {
+function podcasts_get_settings_content() {
 	// Set the context to settings
 	elgg_push_context('settings');
 
-	$user = elgg_get_page_owner_entity();
-	
+	$page_owner = elgg_get_page_owner_entity();
+
+	$type = $page_owner->getType();
+
  	$title = elgg_echo('podcasts:title:usersettings');
-	
-	elgg_pop_breadcrumb();
-	elgg_push_breadcrumb(elgg_echo('settings'), "settings/user/$user->username");
-	
-	$content = elgg_view_form('podcasts/usersettings', array(), array('user' => $user));
+
+	$content = elgg_view_form("podcasts/{$type}settings", array(), array($type => $page_owner));
 	
 	$return['title'] = $title;
 	$return['content'] = $content;
@@ -317,7 +367,7 @@ function podcasts_prepare_form_vars($podcast = NULL) {
 }
 
 /**
- * Returns a rendered list of podcasts with pagination. This function should be
+ * Returns a rendered list of podcasts/episides with pagination. This function should be
  * called by wrapper functions.
  *
  * This is a modified version of elgg_view_entity_list
@@ -343,7 +393,7 @@ function podcasts_prepare_form_vars($podcast = NULL) {
  * @return string The rendered list of entities
  * @access private
  */
-function podcasts_view_entity_list($entities, $vars = array(), $offset = 0, $limit = 10, $full_view = true,
+function podcasts_list($entities, $vars = array(), $offset = 0, $limit = 10, $full_view = true,
 $list_type_toggle = true, $pagination = true) {
 
 	if (!is_int($offset)) {
@@ -366,8 +416,9 @@ $list_type_toggle = true, $pagination = true) {
 	$vars = array_merge($defaults, $vars);
 
 	if (!elgg_in_context('widgets') && elgg_get_viewtype() !== 'rss') {
-		unset($vars['list_class']);
-		return elgg_view('podcasts/podcasts', $vars);
+		$vars['list_class'] = $vars['podcast_list_class']; 
+		$vars['item_class'] = $vars['podcast_item_class'];
+		return elgg_view('podcasts/list', $vars);
 	} else {
 		if ($vars['list_type'] != 'list') {
 			return elgg_view('page/components/gallery', $vars);
@@ -376,6 +427,7 @@ $list_type_toggle = true, $pagination = true) {
 		}
 	}
 }
+
 
 /**
  * Get podcast episode number

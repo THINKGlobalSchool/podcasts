@@ -164,7 +164,6 @@ function ElggPodcastPlayer() {
 			template = self.player.cloneNode(true);
 			$player.replaceWith($(template));
 			$player = $(template);
-			$player.slideDown();
 
 			// Define player elements
 			podcast.player = {
@@ -172,8 +171,8 @@ function ElggPodcastPlayer() {
 				statusBar: $player.children('.elgg-podcast-player-statusbar'),
 				loading: $player.find('.elgg-podcast-player-loading'),
 				position: $player.find('.elgg-podcast-player-position'),
-				timingBox: $player.children('.elgg-podcast-player-timing'),
-				timing: $player.children('.elgg-podcast-player-timing').find('.timing-data')
+				timingBox: $player.find('.elgg-podcast-player-timing'),
+				timing: $player.find('.elgg-podcast-player-timing').find('.timing-data')
 			}
 
 			// Set initial timer stuff (before loading)
@@ -246,8 +245,11 @@ function ElggPodcastPlayer() {
 				if (self.isTouchDevice && event.touches) {
 					event = event.touches[0];
 				}
-
+				// Dragging
 				self.dragActive = true;
+
+				// Set position (click to seek)
+				self.setPosition(event);
 				
 				// Pause when dragging
 				podcast.pause();
@@ -262,7 +264,9 @@ function ElggPodcastPlayer() {
 		// Bind mouseup in status/progress bar
 		$(podcast.player.statusBar).bind(up, function(event) {
 			if (self.dragActive) {
+				// Done dragging
 				self.dragActive = false;
+
 				$(podcast.player.statusBar).removeClass('dragging');
 
 				// Unbind mouse/touch-move
@@ -355,31 +359,26 @@ function ElggPodcastPlayer() {
 	 * Helper to get podcast duration
 	 */
 	this.getDurationEstimate = function(podcast) {
-		return podcast.duration ? podcast.duration : podcast.durationEstimate;
+		var estimate = podcast.duration ? podcast.duration : podcast.durationEstimate;
+		return (estimate >= podcast.elgg_data.duration) ? estimate : podcast.elgg_data.duration;
 	};
 
 	/** 
 	 * Set player button state
 	 */
 	this.setButtonState = function(state) {
-		var play = self.lastPodcast.player.buttons.find('.elgg-podcast-player-play');
-		var pause = self.lastPodcast.player.buttons.find('.elgg-podcast-player-pause');
-		var stop = self.lastPodcast.player.buttons.find('.elgg-podcast-player-stop');
-
 		switch (state) {
 			case 'playing':
-				play.addClass('active');
-				pause.removeClass('active');
+				var play = self.lastPodcast.player.buttons.find('.elgg-podcast-player-play');
+				play.removeClass('elgg-podcast-player-play');
+				play.addClass('elgg-podcast-player-pause');
 				break;
 			case 'paused':
-				pause.addClass('active');
-				play.removeClass('active');
-				break;
 			case 'stopped':
 			default:
-				pause.removeClass('active');
-				stop.removeClass('active');
-				play.removeClass('active');
+				var pause = self.lastPodcast.player.buttons.find('.elgg-podcast-player-pause');
+				pause.removeClass('elgg-podcast-player-pause');
+				pause.addClass('elgg-podcast-player-play');
 				break;
 		}
 	}
@@ -454,20 +453,20 @@ function ElggPodcastPlayer() {
     playerTemplate.innerHTML = [
     '  <div class="elgg-podcast-player-buttons">',
 	'    <a class="elgg-podcast-player-button elgg-podcast-player-play"></a>',
-	'    <a class="elgg-podcast-player-button elgg-podcast-player-pause"></a>',
-	'    <a class="elgg-podcast-player-button elgg-podcast-player-stop"></a>',
 	'  </div>',
-	'  <div class="elgg-podcast-player-statusbar">',
-	'    <div class="elgg-podcast-player-loading"></div>',
-	'    <div class="elgg-podcast-player-position"></div>',
+	'  <div class="elgg-podcast-player-statusbar elgg-podcast-player-inner-bar">',
+	'    <div class="elgg-podcast-player-loading elgg-podcast-player-loading-bar"></div>',
+	'    <div class="elgg-podcast-player-position elgg-podcast-player-position-bar"></div>',
 	'  </div>',
-
-	'  <div class="elgg-podcast-player-timing">',
-	'    <div id="sm2_timing" class="timing-data">',
-	'      <span class="sm2_position">%s1</span> / <span class="sm2_total">%s2</span>',
+	'  <div class="elgg-podcast-player-timing-container elgg-podcast-player-bar">',
+	'    <div class="elgg-podcast-player-timing elgg-podcast-player-timing-bar">',
+	'      <div id="sm2_timing" class="timing-data">',
+	'        <span class="sm2_position">%s1</span> / <span class="sm2_total">%s2</span>',
+	'      </div>',
 	'    </div>',
+	'  </div>',
+	'  <div class="elgg-podcast-player-bar elgg-podcast-player-background-bar">',
 	'  </div>'
-
 	].join('\n');
 
 	// Set podcast player template

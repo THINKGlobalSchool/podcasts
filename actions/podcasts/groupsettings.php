@@ -22,7 +22,7 @@ if (!$group->canEdit()) {
 	forward(REFERER);
 }
 
-$fwd = "groups/edit/{$guid}#other";
+$fwd = "podcasts/group/{$guid}/all";
 
 $title = get_input('title');
 $subtitle = get_input('subtitle');

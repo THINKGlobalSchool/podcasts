@@ -10,7 +10,7 @@
  *
  */
 
-$group = elgg_get_page_owner_entity();
+$group = elgg_extract('group', $vars);
 
 $podcast_settings = unserialize($group->podcast_settings);
 
@@ -26,7 +26,7 @@ $categories = $podcast_settings['categories'];
 $copyright = $podcast_settings['copyright'];
 
 // Output base seeings form
-$form = elgg_view_form('podcasts/settings',array('action' => 'action/podcasts/groupsettings'), array(
+echo elgg_view_form('podcasts/settings',array('action' => 'action/podcasts/groupsettings'), array(
 	'entity' => $group,
 	'title' => $title,
 	'description' => $description,
@@ -35,5 +35,3 @@ $form = elgg_view_form('podcasts/settings',array('action' => 'action/podcasts/gr
 	'categories' => $categories,
 	'copyright' => $copyright
 ));
-
-echo elgg_view_module('info', elgg_echo('podcasts:groupsettings'), $form);
