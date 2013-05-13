@@ -87,7 +87,8 @@ $english = array(
 	'podcasts:error:filetoolarge' => 'File exceeds maximum allowed upload size (%s)',
 	'podcasts:error:toomanyfiles' => 'You can only upload one file at a time',
 	'podcasts:error:uploadfailedxhr' => 'Sorry; we could not save your file. (XHR)', 
-	'podcasts:none' => 'No episodes',
+	'podcasts:episodes:none' => 'No episodes',
+	'podcasts:none' => 'No podcasts',
 	'podcasts:downloadfailed' => 'Podcast file download failed',
 
 	// Podcast feed

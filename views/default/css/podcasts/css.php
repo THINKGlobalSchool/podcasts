@@ -22,8 +22,7 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 }
 
 .elgg-podcast-episode .elgg-image-block {
-	margin: 6px 0;
-	padding-right: 10px;
+	padding: 10px 10px 0;
 }
 
 .elgg-podcast-title, 
@@ -60,8 +59,9 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 	text-decoration: underline;
 }
 
-.elgg-list-podcast-episodes .elgg-podcast-episode h4.elgg-podcast-summary-title {
-	text-align: right;
+.elgg-list-podcast-episodes .elgg-podcast-episode .elgg-podcast-summary-title {
+	color: #4690D6;
+	font-weight: bold;
 }
 
 .elgg-list .elgg-podcast h3.elgg-podcast-title {
@@ -143,7 +143,7 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 	height: 68px;
 	display: inline-block;
 	cursor: pointer;
-	background: transparent url(<?php echo $images_url; ?>spot_button_sprites.png) no-repeat left;
+	background: transparent url(<?php echo $images_url; ?>button_sprites.png) no-repeat left;
 }
 
 .elgg-podcast-player .elgg-podcast-player-buttons a.elgg-podcast-player-button.elgg-podcast-player-play {
@@ -272,22 +272,24 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 
 /* Position bar */
 .elgg-podcast-player-position-bar {
-	/* Firefox v3.5+ */
-	-moz-box-shadow:inset 0px 0px 4px rgba(0,0,0,0.65);
-	/* Safari v3.0+ and by Chrome v0.2+ */
-	-webkit-box-shadow:inset 0px 0px 4px rgba(0,0,0,0.65);
-	/* Firefox v4.0+ , Safari v5.1+ , Chrome v10.0+, IE v10+ and by Opera v10.5+ */
-	box-shadow:inset 0px 0px 4px rgba(0,0,0,0.65);
-	border-style:solid;
+	background-color:rgb(0,84,167);
+	width:199px;
+	height:13px;
+	border-color:rgb(125,135,145);
+	border-width:1px;
 	/* Firefox v1.0+ */
 	-moz-border-radius:0%;
 	/* Safari v3.0+ and by Chrome v0.2+ */
 	-webkit-border-radius:0%/6%;
 	/* Firefox v4.0+ , Safari v5.0+ , Chrome v4.0+ , Opera v10.5+  and by IE v9.0+ */
 	border-radius:0%/6%;
-	border-width:1px;
-	border-color:rgb(125,135,145);
-	background-color:rgb(133,22,29);
+	border-style:solid;
+	/* Firefox v3.5+ */
+	-moz-box-shadow:inset 0px 0px 4px rgba(0,0,0,0.65);
+	/* Safari v3.0+ and by Chrome v0.2+ */
+	-webkit-box-shadow:inset 0px 0px 4px rgba(0,0,0,0.65);
+	/* Firefox v4.0+ , Safari v5.1+ , Chrome v10.0+, IE v10+ and by Opera v10.5+ */
+	box-shadow:inset 0px 0px 4px rgba(0,0,0,0.65);
 }
 
 /* --- End Fancy Bars --- */
@@ -365,8 +367,9 @@ div#podcast-dropzone .podcast-file-replace {
 
 .elgg-podcasts-subscribe-link {
 	display: block;
-	font-size: 0.8em;
+	font-size: 11px;
 	font-weight: bold;
+	line-height: 17px;
 	margin-bottom: 20px;
 	text-transform: uppercase;
 }
@@ -374,6 +377,7 @@ div#podcast-dropzone .podcast-file-replace {
 .elgg-podcasts-subscribe-link span {
  	display: inline-block;
  	vertical-align: bottom;
+ 	margin-right: 5px;
 }
 
 #podcast-edit .elgg-text-help {

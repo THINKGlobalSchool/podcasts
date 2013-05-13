@@ -95,9 +95,6 @@ function podcasts_init() {
 	// Register for view plugin hook to override rss page/default view
 	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handelr');
 
-	// Extend object summary
-	elgg_extend_view('object/summary/extend', 'podcasts/summary');
-
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';
 	elgg_register_action('podcasts/save', "$action_path/save.php");
@@ -369,6 +366,33 @@ function podcasts_setup_entity_menu($hook, $type, $value, $params) {
 			'href' => $entity->getDownloadURL(),
 		);
 		$value[] = ElggMenuItem::factory($options);
+
+		// Link to owner podcast
+		if (get_input('show_podcast_container')) {
+			$owner = $entity->getOwnerEntity();
+
+			$owner_url = "podcasts/owner/{$owner->username}";
+			$owner_name = $owner->name;
+
+			$container = $entity->getContainerEntity();
+
+			if (elgg_instanceof($container, 'group')) {
+				$container = $entity->getContainerEntity();
+				$owner_url = "podcasts/group/{$container->guid}/all";
+				$owner_name = $container->name;
+			}
+
+			$options = array(
+				'name' => 'podcast_link',
+				'text' => elgg_echo('podcasts:title:owner_podcasts', array($owner_name)),
+				'encode_text' => FALSE,
+				'href' => $owner_url,
+				'priority' => 1,
+				'link_class' => 'elgg-podcast-summary-title', 
+			);
+			$value[] = ElggMenuItem::factory($options);
+		}
+
 	} else if ((elgg_instanceof($entity, 'user') || elgg_instanceof($entity, 'group')) && elgg_in_context('podcasts')) {
 		// Clear menu
 		$value = array();

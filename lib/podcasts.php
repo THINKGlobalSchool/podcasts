@@ -121,7 +121,13 @@ function podcasts_get_page_content_list($container_guid = NULL) {
 
 	elgg_register_title_button();
 
-	$return['content'] = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_list');
+	$list = elgg_list_entities($options, 'elgg_get_entities_from_metadata', 'podcasts_list');
+
+	if ($list) {
+		$return['content'] = $list;
+	} else if (elgg_get_viewtype() == 'default') {
+		$return['content'] = elgg_echo('podcasts:episodes:none');
+	}
 
 	return $return;
 }
@@ -152,10 +158,8 @@ function podcasts_get_page_content_list_podcasts($container_guid = NULL) {
 	$subtype_id = get_subtype_id('object', 'podcast');
 
 	$options['selects'][] = "(SELECT COUNT(*) from {$dbprefix}entities es where es.container_guid = e.guid AND ((es.type = 'object' AND es.subtype IN ({$subtype_id})))) as episode_count";
-	$options['joins'][] = "JOIN {$dbprefix}users_entity as ue";
-	$options['joins'][] = "JOIN {$dbprefix}groups_entity as ge";
+	$options['joins'][] = "JOIN {$dbprefix}users_entity ue";
 	$options['wheres'][] = "ue.banned = 'no'";
-	$options['wheres'][] = "(e.guid = ue.guid OR e.guid = ge.guid)";
 	$options['wheres'][] = "(exists (SELECT  1 FROM {$dbprefix}entities p WHERE p.container_guid = e.guid AND (p.type = 'object' AND p.subtype IN ({$subtype_id}))))";
 	$options['order_by'] = "episode_count DESC";
 	$options['group_by'] = 'e.guid HAVING episode_count >= 1';
@@ -163,7 +167,13 @@ function podcasts_get_page_content_list_podcasts($container_guid = NULL) {
 	// Clear current users entity cache
 	_elgg_invalidate_cache_for_entity(elgg_get_logged_in_user_guid());
 
-	$return['content'] = elgg_list_entities($options, 'elgg_get_entities', 'podcasts_list');
+	$list = elgg_list_entities($options, 'elgg_get_entities', 'podcasts_list');
+
+	if ($list) {
+		$return['content'] = $list;
+	} else if (elgg_get_viewtype() == 'default') {
+		$return['content'] = elgg_echo('podcasts:none');
+	}
 
 	elgg_register_title_button();
 
