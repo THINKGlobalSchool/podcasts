@@ -186,7 +186,7 @@ elgg.podcasts.uploader.saveClick = function(event) {
 			if (result.status != -1) {
 				// Display success
 				elgg.system_message(result.system_messages.success);
-				window.location = result.output;
+				window.parent.location = result.output;
 			} else {
 				// There was an error, display it
 				elgg.register_error(result.system_messages.error);
