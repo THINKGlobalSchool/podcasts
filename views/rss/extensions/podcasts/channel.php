@@ -14,6 +14,7 @@
 $page_owner = elgg_get_page_owner_entity();
 $podcast_author = $page_owner->name;
 $podcast_image = $page_owner->getIconURL('large');
+$podcast_image = str_replace("&", "&amp;", $podcast_image);
 
 // Group podcast info
 if (elgg_instanceof($page_owner, 'group')) {

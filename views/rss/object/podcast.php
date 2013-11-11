@@ -33,6 +33,8 @@ $summary = trim(elgg_strip_tags($podcast->description));
 
 $image = $owner->getIconURL('large');
 
+$image = str_replace("&", "&amp;", $image);
+
 $guid = $podcast->getURL(); // For iTunes
 
 $pubDate = date("r", $podcast->time_created); // RFC 2822
