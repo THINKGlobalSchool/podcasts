@@ -17,7 +17,7 @@ elgg_load_js('jquery-file-upload');
 elgg_load_js('jquery.iframe-transport');
 
 // Css
-elgg_load_css('podcasts-jquery-ui');
+elgg_load_css('elgg.jquery.ui');
 
 $podcast = get_entity($vars['guid']);
 $vars['entity'] = $podcast;
