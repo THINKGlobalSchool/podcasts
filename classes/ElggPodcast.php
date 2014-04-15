@@ -21,6 +21,50 @@ class ElggPodcast extends ElggFile {
 	}
 
 	/**
+	 * Loads an ElggPodcast entity.
+	 *
+	 * @param int $guid GUID of the ElggPodcast object
+	 */
+	public function __construct($guid = null) {
+		parent::__construct($guid);
+
+		if (is_numeric($guid)) {
+			// $guid is a GUID so load
+			if (!$this->load($guid)) {
+				throw new IOException(elgg_echo('IOException:FailedToLoadGUID', array(get_class(), $guid)));
+			}
+		}
+	}
+
+	/**
+	 * Loads the full ElggPodcast when given a guid.
+	 *
+	 * @param mixed $guid GUID of an ElggObject or the stdClass object from entities table
+	 *
+	 * @return bool
+	 * @throws InvalidClassException
+	 */
+	protected function load($guid) {
+		$attr_loader = new ElggAttributeLoader(get_class(), 'object', $this->attributes);
+		$attr_loader->requires_access_control = true;
+		$attr_loader->secondary_loader = 'get_object_entity_as_row';
+
+		$attrs = $attr_loader->getRequiredAttributes($guid);
+
+		if (!$attrs) {
+			return false;
+		}
+
+		// Force subtype to podcast for this loaded entity
+		$attrs['subtype'] = get_subtype_id('object', 'podcast');
+
+		$this->attributes = $attrs;
+		$this->attributes['tables_loaded'] = 2;
+		
+		return true;
+	}
+
+	/**
 	 * Save the podcast
 	 *
 	 * @param array $data File data to upload, if null then we're just setting attribute
@@ -151,7 +195,7 @@ class ElggPodcast extends ElggFile {
 	public function detectMimeType($file = null, $default = null) {
 		if (!$file) {
 			if (isset($this) && $this->filename) {
-				$file = $this->filename;
+				$file = $this->getFilenameOnFilestore();
 			} else {
 				return false;
 			}
@@ -179,6 +223,15 @@ class ElggPodcast extends ElggFile {
 		return $mime;
 	}
 
+	// /**
+	//  * Get the mime type of the podcast.
+	//  *
+	//  * @return string
+	//  */
+	// public function getMimeType() {
+	// 	// Check if we've already set a valid mimetype
+	// 	return $this->detectMimeType();
+	// }
 
 	/**
 	 * Check for valid podcast mime type
@@ -186,7 +239,7 @@ class ElggPodcast extends ElggFile {
 	 * @param string $mime_type
 	 * @return bool
 	 */
-	protected static function checkValidMimeType($mime_type) {
+	public static function checkValidMimeType($mime_type) {
 		elgg_load_library('elgg:podcasts');
 		if (in_array($mime_type, podcasts_get_valid_mime_types())) {
 			return TRUE;

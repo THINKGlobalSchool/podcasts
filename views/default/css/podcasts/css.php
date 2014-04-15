@@ -76,6 +76,10 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 	overflow: hidden;
 }
 
+.elgg-item .elgg-podcast-player {
+	width: 100%;
+}
+
 .elgg-podcast-player .elgg-podcast-player-statusbar {
 	cursor: -moz-grab;
 	cursor: -webkit-grab;

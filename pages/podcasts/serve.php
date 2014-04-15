@@ -17,7 +17,7 @@ elgg_set_ignore_access(TRUE);
 $podcast_guid = get_input("guid");
 
 // Get the file
-$podcast = get_entity($podcast_guid);
+$podcast = new ElggPodcast($podcast_guid);
 
 // Check for valid podcast
 if (!$podcast) {

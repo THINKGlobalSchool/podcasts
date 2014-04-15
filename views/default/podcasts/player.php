@@ -11,7 +11,9 @@
  * @uses $vars['entity']
  */
 
-$entity = elgg_extract('entity', $vars);
+$entity_guid = elgg_extract('entity_guid', $vars);
+
+$entity = new ElggPodcast($entity_guid);
 
 if (!elgg_instanceof($entity, 'object', 'podcast')) {
 	return FALSE;

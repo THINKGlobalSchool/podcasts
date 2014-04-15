@@ -62,7 +62,7 @@ if (elgg_in_context('widgets')) {
 	$metadata = '';
 }
 
-$player = elgg_view('podcasts/player', array('entity' => $podcast));
+$player = elgg_view('podcasts/player', array('entity_guid' => $podcast->guid));
 
 $episode_title = elgg_echo('podcasts:episode_title', array(
 	podcasts_get_episode_number($podcast),

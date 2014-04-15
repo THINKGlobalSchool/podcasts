@@ -90,6 +90,9 @@ function podcasts_init() {
 	// Register for view plugin hook to override rss page/default view
 	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handelr');
 
+	// Override file icon url
+	elgg_register_plugin_hook_handler('file:icon:url', 'override', 'podcasts_file_icon_url_override');
+
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';
 	elgg_register_action('podcasts/save', "$action_path/save.php");
@@ -502,5 +505,36 @@ function podcasts_rss_page_view_handelr($hook, $type, $value, $params) {
 		$value = elgg_view('page/podcast', $params['vars']);
 	}
 	
+	return $value;
+}
+
+/**
+ * Override file icon url handler
+ *
+ * @param string $hook
+ * @param string $type
+ * @param bool   $value
+ * @param array  $params
+ * 
+ * @return array
+ */
+function podcasts_file_icon_url_override($hook, $type, $value, $params) {
+	$file = $params['entity'];
+	$size = $params['size'];
+
+	if ($size == 'large') {
+		$ext = '_lrg';
+	} else {
+		$ext = '';
+	}
+
+	// Load podcasts library
+	elgg_load_library('elgg:podcasts');
+	$mimetype = podcasts_get_mime_type($file->getFilenameOnFilestore());
+	
+	// If mimetype (as detected by podcast lib) is audio, force music icon
+	if (strpos($mimetype, 'audio') !== FALSE) {
+		return "mod/file/graphics/icons/music{$ext}.gif";
+	}
 	return $value;
 }
