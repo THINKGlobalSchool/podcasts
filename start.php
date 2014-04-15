@@ -93,6 +93,9 @@ function podcasts_init() {
 	// Override file icon url
 	elgg_register_plugin_hook_handler('file:icon:url', 'override', 'podcasts_file_icon_url_override');
 
+	// Register for search.
+	elgg_register_entity_type('object', 'podcast');
+
 	// Actions
 	$action_path = elgg_get_plugins_path() . 'podcasts/actions/podcasts';
 	elgg_register_action('podcasts/save', "$action_path/save.php");

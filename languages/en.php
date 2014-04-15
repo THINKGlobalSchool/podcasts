@@ -90,6 +90,7 @@ $english = array(
 	'podcasts:episodes:none' => 'No episodes',
 	'podcasts:none' => 'No podcasts',
 	'podcasts:downloadfailed' => 'Podcast file download failed',
+	'podcasts:invaldepisode' => 'Invalid podcast episode',
 
 	// Podcast feed
 	'podcasts:feed:description' => '%s\'s Podcast',
