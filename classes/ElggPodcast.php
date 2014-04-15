@@ -241,7 +241,7 @@ class ElggPodcast extends ElggFile {
 	 */
 	public static function checkValidMimeType($mime_type) {
 		elgg_load_library('elgg:podcasts');
-		if (in_array($mime_type, podcasts_get_valid_mime_types())) {
+		if ($mime_type && in_array($mime_type, podcasts_get_valid_mime_types())) {
 			return TRUE;
 		} else {
 			return FALSE;
