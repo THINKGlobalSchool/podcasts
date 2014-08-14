@@ -181,7 +181,7 @@ elgg.podcasts.uploader.saveClick = function(event) {
 
 	// Send files with promise
 	var jqXHR = $('input#podcast-file').fileupload('send',{files: data.files})
-		.success(function (result, textStatus, jqXHR) {
+		.done(function (result, textStatus, jqXHR) {
 			// Success/done check elgg status's
 			if (result.status != -1) {
 				// Display success
@@ -195,16 +195,13 @@ elgg.podcasts.uploader.saveClick = function(event) {
 				$('#podcast-upload-spinner').replaceWith($button);
 			}
 		})
-    	.error(function (jqXHR, textStatus, errorThrown) {
+    	.fail(function (jqXHR, textStatus, errorThrown) {
 			// If we're here, there was an error making the request
 			// or we got some screwy response.. display an error and log it for debugging
 			elgg.register_error(elgg.echo('podcasts:error:uploadfailedxhr'));
 
 			// Enable the button
 			$('#podcast-upload-spinner').replaceWith($button);
-		})
-    	.complete(function (result, textStatus, jqXHR) {
-			// Just keeping this here for future use/testing
 		});
 
 		event.preventDefault();
