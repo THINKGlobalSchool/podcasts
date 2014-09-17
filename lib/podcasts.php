@@ -158,8 +158,6 @@ function podcasts_get_page_content_list_podcasts($container_guid = NULL) {
 	$subtype_id = get_subtype_id('object', 'podcast');
 
 	$options['selects'][] = "(SELECT COUNT(*) from {$dbprefix}entities es where es.container_guid = e.guid AND ((es.type = 'object' AND es.subtype IN ({$subtype_id})))) as episode_count";
-	$options['joins'][] = "JOIN {$dbprefix}users_entity ue";
-	$options['wheres'][] = "ue.banned = 'no'";
 	$options['wheres'][] = "(exists (SELECT  1 FROM {$dbprefix}entities p WHERE p.container_guid = e.guid AND (p.type = 'object' AND p.subtype IN ({$subtype_id}))))";
 	$options['order_by'] = "episode_count DESC";
 	$options['group_by'] = 'e.guid HAVING episode_count >= 1';
