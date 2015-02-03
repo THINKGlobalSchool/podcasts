@@ -10,7 +10,7 @@
  *
  */
 
-$english = array(
+return array(
 	// General
 	'podcast' => 'Podcast',
 	'podcasts:podcast' => 'Podcast',
@@ -116,5 +116,3 @@ Listen to and comment on this podcast episode:
 ',
 
 );
-
-add_translation('en', $english);

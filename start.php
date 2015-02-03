@@ -5,7 +5,7 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
+ * @copyright THINK Global School 2010 - 2015
  * @link http://www.thinkglobalschool.com/
  *
  * @todo
@@ -26,37 +26,30 @@ function podcasts_init() {
 
 	// Register podcasts JS
 	$js = elgg_get_simplecache_url('js', 'podcasts/podcasts');
-	elgg_register_simplecache_view('js/podcasts/podcasts');
 	elgg_register_js('elgg.podcasts', $js);
 
 	// Register podcasts uploader JS
 	$js = elgg_get_simplecache_url('js', 'podcasts/uploader');
-	elgg_register_simplecache_view('js/podcasts/uploader');
 	elgg_register_js('elgg.podcasts.uploader', $js);
 
 	// Register podcasts JS
 	$js = elgg_get_simplecache_url('js', 'soundmanager2');
-	elgg_register_simplecache_view('js/soundmanager2');
 	elgg_register_js('soundmanager2', $js);
 
 	// Register podcasts CSS
 	$css = elgg_get_simplecache_url('css', 'podcasts/css');
-	elgg_register_simplecache_view('css/podcasts/css');
 	elgg_register_css('elgg.podcasts', $css);
 
 	// Register jquery ui widget (for jquery file upload)
 	$js = elgg_get_simplecache_url('js', 'jquery_ui_widget');
-	elgg_register_simplecache_view('js/jquery_ui_widget');
 	elgg_register_js('jquery.ui.widget', $js);
 	
 	// Register JS File Upload
 	$js = elgg_get_simplecache_url('js', 'jquery_file_upload');
-	elgg_register_simplecache_view('js/jquery_file_upload');
 	elgg_register_js('jquery-file-upload', $js);
 
 	// Register JS jquery.iframe-transport (for jquery-file-upload)
 	$js = elgg_get_simplecache_url('js', 'jquery_iframe_transport');
-	elgg_register_simplecache_view('js/jquery_iframe_transport');
 	elgg_register_js('jquery.iframe-transport', $js);
 
 	// Pagesetup event handler
@@ -72,7 +65,7 @@ function podcasts_init() {
 	add_group_tool_option('podcasts', elgg_echo('podcasts:enablepodcasts'), true);
 
 	// Podcasts url handler
-	elgg_register_entity_url_handler('object', 'podcast', 'podcasts_url_handler');
+	elgg_register_plugin_hook_handler('entity:url', 'object', 'podcasts_url_handler');
 
 	// Podcasts page handler
 	elgg_register_page_handler('podcasts', 'podcasts_page_handler');
@@ -301,20 +294,30 @@ function podcasts_extras_menu($hook, $type, $value, $params) {
 }
 
 /**
- * Format and return the URL for podcasts.
+ * Returns the URL from a podcast entity
  *
- * @param ElggPodcast $podcast Podcast object
- * @return string URL of podcast.
+ * @param string $hook   'entity:url'
+ * @param string $type   'object'
+ * @param string $url    The current URL
+ * @param array  $params Hook parameters
+ * @return string
  */
-function podcasts_url_handler($podcast) {
-	if (!$podcast->getOwnerEntity()) {
+function podcasts_url_handler($hook, $type, $url, $params) {
+	$entity = $params['entity'];
+
+	// Check that the entity is a photo object
+	if (!elgg_instanceof($entity, 'object', 'podcast')) {
+		return;
+	}
+
+	if (!$entity->getOwnerEntity()) {
 		// default to a standard view if no owner.
 		return FALSE;
 	}
 
-	$friendly_title = elgg_get_friendly_title($podcast->title);
+	$friendly_title = elgg_get_friendly_title($entity->title);
 
-	return "podcasts/view/{$podcast->guid}/$friendly_title";
+	return "podcasts/view/{$entity->guid}/$friendly_title";
 }
 
 /**
