@@ -103,8 +103,9 @@ return array(
 	'river:comment:object:podcast' => '%s commented on the podcast episode: %s',
 
 	// Notifications
-	'podcasts:newpodcast' => 'A new podcast episode',
-	'podcasts:notification' =>
+	'podcasts:notification:subject' => 'A new podcast episode',
+	'podcasts:notification:summary' => 'New podcast episode: %s',
+	'podcasts:notification:body' =>
 '
 %s published a new podcast episode
 

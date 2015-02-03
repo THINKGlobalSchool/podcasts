@@ -71,8 +71,8 @@ function podcasts_init() {
 	elgg_register_page_handler('podcasts', 'podcasts_page_handler');
 
 	// Register podcasts for notifications
-	register_notification_object('object', 'podcast', elgg_echo('podcasts:newpodcast'));
-	elgg_register_plugin_hook_handler('notify:entity:message', 'object', 'podcasts_notify_message');
+	elgg_register_notification_event('object', 'podcast', array('create'));
+	elgg_register_plugin_hook_handler('prepare', 'notification:publish:object:podcast', 'podcasts_prepare_notification');
 
 	// Hook into entity menu for podcasts
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'podcasts_setup_entity_menu');
@@ -321,31 +321,36 @@ function podcasts_url_handler($hook, $type, $url, $params) {
 }
 
 /**
- * Format podcasts notifications message
+ * Prepare a notification message about a new podcast
  *
- * @param string $hook
- * @param string $type
- * @param bool   $value
- * @param array  $params
+ * @param string                          $hook         Hook name
+ * @param string                          $type         Hook type
+ * @param Elgg_Notifications_Notification $notification The notification to prepare
+ * @param array                           $params       Hook parameters
+ * @return Elgg_Notifications_Notification
  */
-function podcasts_notify_message($hook, $type, $value, $params) {
-	$entity = $params['entity'];
-	$to_entity = $params['to_entity'];
+function podcasts_prepare_notification($hook, $type, $notification, $params) {
+	$entity = $params['event']->getObject();
+	$owner = $params['event']->getActor();
+	$recipient = $params['recipient'];
+	$language = $params['language'];
 	$method = $params['method'];
 
-	if (elgg_instanceof($entity, 'object', 'podcast')) {
-		$descr = $entity->description;
-		$title = $entity->title;
-		$owner = $entity->getOwnerEntity();
-		
-		return elgg_echo('podcasts:notification', array(
+	// Title for the notification
+	$notification->subject = elgg_echo('podcasts:notification:subject');
+
+    // Message body for the notification
+	$notification->body = elgg_echo('podcasts:notification:body', array(
 			$owner->name,
-			$title,
-			$descr,
+			$entity->title,
+			$entity->description,
 			$entity->getURL()
-		));
-	}
-	return null;
+	), $language);
+
+    // The summary text is used e.g. by the site_notifications plugin
+    $notification->summary = elgg_echo('podcasts:notification:summary', array($entity->title), $language);
+
+    return $notification;
 }
 
 /**
