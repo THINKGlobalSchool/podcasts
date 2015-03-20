@@ -5,8 +5,8 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2015
+ * @link http://www.thinkglobalschool.org/
  *
  * Wonderful code from:
  * @link https://groups.google.com/d/msg/jplayer/nSM2UmnSKKA/Hu76jDZS4xcJ
@@ -17,7 +17,7 @@ elgg_set_ignore_access(TRUE);
 $podcast_guid = get_input("guid");
 
 // Get the file
-$podcast = new ElggPodcast($podcast_guid);
+$podcast = get_entity($podcast_guid);
 
 // Check for valid podcast
 if (!$podcast) {

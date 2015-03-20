@@ -5,8 +5,8 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2015
+ * @link http://www.thinkglobalschool.org/
  *
  */
 
@@ -45,7 +45,6 @@ $images_url = elgg_get_site_url() . 'mod/podcasts/graphics/';
 	background: none repeat scroll 0 0 #444444;
 	border-bottom: medium none;
 	padding: 5px 8px;
-	text-transform: uppercase;
 	-moz-box-shadow: 1px 1px 5px #000000 inset;
 	-webkit-box-shadow: 1px 1px 5px #000000 inset;
 	box-shadow: 1px 1px 5px #000000 inset;
@@ -311,7 +310,7 @@ div#podcast-dropzone {
 	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
-	width: 100%;
+	width: auto;
 }
 
 div#podcast-dropzone span {
@@ -369,16 +368,17 @@ div#podcast-dropzone .podcast-file-replace {
 	margin-bottom: 20px;
 }
 
-.elgg-podcasts-subscribe-link {
+.elgg-podcasts-subscribe-link,
+.elgg-podcast-edit-button {
 	display: block;
-	font-size: 11px;
+	font-size: 1em;
 	font-weight: bold;
 	line-height: 17px;
 	margin-bottom: 20px;
-	text-transform: uppercase;
 }
 
-.elgg-podcasts-subscribe-link span {
+.elgg-podcasts-subscribe-link span,
+.elgg-podcast-edit-button span {
  	display: inline-block;
  	vertical-align: bottom;
  	margin-right: 5px;
@@ -386,6 +386,10 @@ div#podcast-dropzone .podcast-file-replace {
 
 #podcast-edit .elgg-text-help {
 	display: inline-block;
+}
+
+.actionmenu-actions .elgg-menu-item-podcasts-download {
+	background-position: 0px -306px !important;
 }
 
 .elgg-podcasts-help-module {

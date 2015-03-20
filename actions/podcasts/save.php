@@ -5,8 +5,8 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2015
+ * @link http://www.thinkglobalschool.org/
  *
  */
 
@@ -84,7 +84,12 @@ try {
 		// Add to river if this is a new podcast
 		if (!$guid) {
 			// River item
-			add_to_river('river/object/podcast/create', 'create', $podcast->owner_guid, $podcast->getGUID());
+			elgg_create_river_item(array(
+				'view' => 'river/object/podcast/create',
+				'action_type' => 'create',
+				'subject_guid' => $podcast->owner_guid,
+				'object_guid' => $podcast->getGUID()
+			));
 		}
 
 		$fwd = $podcast->getURL();

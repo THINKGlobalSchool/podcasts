@@ -5,8 +5,8 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2015
+ * @link http://www.thinkglobalschool.org/
  *
  */
 
@@ -42,7 +42,7 @@ if ($body) {
 }
 
 // Add subscribe link
-$podcast_feed_url = full_url();
+$podcast_feed_url = current_page_url();
 if (substr_count($podcast_feed_url, '?')) {
 	$podcast_feed_url .= "&view=rss";
 } else {
@@ -59,8 +59,8 @@ echo elgg_view('output/url', array(
 
 if ($page_owner && $page_owner->canEdit()) {
 	echo elgg_view('output/url', array(
-		'text' => elgg_echo('podcasts:editpodcastsettings'),
+		'text' => elgg_view_icon('settings-alt-hover') . elgg_echo('podcasts:editpodcastsettings'),
 		'href' => $podcast_settings_url,
-		'class' => 'elgg-button elgg-button-action elgg-podcast-edit-button'
+		'class' => 'elgg-podcast-edit-button'
 	));
 }

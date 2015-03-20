@@ -5,8 +5,8 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2015
+ * @link http://www.thinkglobalschool.org/
  *
  */
 ?>
@@ -171,7 +171,7 @@ elgg.podcasts.uploader.saveClick = function(event) {
 		resizable: false,
 		closeOnEscape: false,
 		title: elgg.echo('podcasts:uploading'),
-		height: 85,
+		height: 100,
 		open: function(event, ui) {
 			$(".ui-dialog-titlebar-close").remove();
 			$("#podcast-upload-progress").progressbar({ value: 0 });
@@ -199,6 +199,9 @@ elgg.podcasts.uploader.saveClick = function(event) {
 			// If we're here, there was an error making the request
 			// or we got some screwy response.. display an error and log it for debugging
 			elgg.register_error(elgg.echo('podcasts:error:uploadfailedxhr'));
+			console.log(jqXHR);
+			console.log(textStatus);
+			console.log(errorThrown);
 
 			// Enable the button
 			$('#podcast-upload-spinner').replaceWith($button);
@@ -262,4 +265,6 @@ elgg.podcasts.uploader.calculateSize = function(size) {
 }
 
 // Elgg podcasts uploader init
-elgg.register_hook_handler('init', 'system', elgg.podcasts.uploader.init);
+require(['jquery.ui.widget', 'jquery.iframe-transport', 'jquery.fileupload'], function() {
+	elgg.register_hook_handler('init', 'system', elgg.podcasts.uploader.init);
+});

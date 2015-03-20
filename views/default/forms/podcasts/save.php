@@ -12,9 +12,6 @@
 
 // Load JS
 elgg_load_js('elgg.podcasts.uploader');
-elgg_load_js('jquery.ui.widget');
-elgg_load_js('jquery-file-upload');
-elgg_load_js('jquery.iframe-transport');
 
 // Css
 elgg_load_css('elgg.jquery.ui');

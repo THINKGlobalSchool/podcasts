@@ -40,18 +40,6 @@ function podcasts_init() {
 	$css = elgg_get_simplecache_url('css', 'podcasts/css');
 	elgg_register_css('elgg.podcasts', $css);
 
-	// Register jquery ui widget (for jquery file upload)
-	$js = elgg_get_simplecache_url('js', 'jquery_ui_widget');
-	elgg_register_js('jquery.ui.widget', $js);
-	
-	// Register JS File Upload
-	$js = elgg_get_simplecache_url('js', 'jquery_file_upload');
-	elgg_register_js('jquery-file-upload', $js);
-
-	// Register JS jquery.iframe-transport (for jquery-file-upload)
-	$js = elgg_get_simplecache_url('js', 'jquery_iframe_transport');
-	elgg_register_js('jquery.iframe-transport', $js);
-
 	// Pagesetup event handler
 	elgg_register_event_handler('pagesetup','system','podcasts_pagesetup');
 
@@ -85,6 +73,11 @@ function podcasts_init() {
 
 	// Override file icon url
 	elgg_register_plugin_hook_handler('file:icon:url', 'override', 'podcasts_file_icon_url_override');
+
+	// Put menu items into action menu sections if tgsutilies is enabled
+	if (elgg_is_active_plugin('tgsutilities')) {
+		elgg_register_plugin_hook_handler('sectionmap', 'actionmenu', 'podcasts_action_menu_setup');		
+	}
 
 	// Register for search.
 	elgg_register_entity_type('object', 'podcast');
@@ -409,7 +402,7 @@ function podcasts_setup_entity_menu($hook, $type, $value, $params) {
 		// Episode counts
 		$options = array(
 			'name' => 'episodes_count',
-			'text' => elgg_echo('podcasts:episodes', array($entity->episode_count)),
+			'text' => elgg_echo('podcasts:episodes', array($entity->getVolatileData('select:episode_count'))),
 			'encode_text' => FALSE,
 			'href' => FALSE,
 		);
@@ -547,5 +540,23 @@ function podcasts_file_icon_url_override($hook, $type, $value, $params) {
 	if (strpos($mimetype, 'audio') !== FALSE) {
 		return "mod/file/graphics/icons/music{$ext}.gif";
 	}
+	return $value;
+}
+
+/**
+ * Place todo related entity menu items into action menu sections
+ *
+ * @param string $hook
+ * @param string $type
+ * @param array  $value
+ * @param array  $params
+ * @return array
+ */
+function podcasts_action_menu_setup($hook, $type, $value, $params) {
+	// Define which sections items should be in
+	$value['podcast_link'] = 'info';
+	$value['podcasts_download'] = 'actions';
+
+
 	return $value;
 }

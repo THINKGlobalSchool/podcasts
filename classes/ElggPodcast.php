@@ -5,8 +5,8 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2015
+ * @link http://www.thinkglobalschool.org/
  *
  */
 
@@ -18,50 +18,6 @@ class ElggPodcast extends ElggFile {
 		parent::initializeAttributes();
 
 		$this->attributes['subtype'] = "podcast";
-	}
-
-	/**
-	 * Loads an ElggPodcast entity.
-	 *
-	 * @param int $guid GUID of the ElggPodcast object
-	 */
-	public function __construct($guid = null) {
-		parent::__construct($guid);
-
-		if (is_numeric($guid)) {
-			// $guid is a GUID so load
-			if (!$this->load($guid)) {
-				throw new IOException(elgg_echo('IOException:FailedToLoadGUID', array(get_class(), $guid)));
-			}
-		}
-	}
-
-	/**
-	 * Loads the full ElggPodcast when given a guid.
-	 *
-	 * @param mixed $guid GUID of an ElggObject or the stdClass object from entities table
-	 *
-	 * @return bool
-	 * @throws InvalidClassException
-	 */
-	protected function load($guid) {
-		$attr_loader = new ElggAttributeLoader(get_class(), 'object', $this->attributes);
-		$attr_loader->requires_access_control = true;
-		$attr_loader->secondary_loader = 'get_object_entity_as_row';
-
-		$attrs = $attr_loader->getRequiredAttributes($guid);
-
-		if (!$attrs) {
-			return false;
-		}
-
-		// Force subtype to podcast for this loaded entity
-		$attrs['subtype'] = get_subtype_id('object', 'podcast');
-
-		$this->attributes = $attrs;
-		$this->attributes['tables_loaded'] = 2;
-		
-		return true;
 	}
 
 	/**
