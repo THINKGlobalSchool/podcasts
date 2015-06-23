@@ -69,7 +69,7 @@ function podcasts_init() {
 	elgg_register_plugin_hook_handler('register', 'menu:filter', 'podcasts_setup_filter_menu');
 
 	// Register for view plugin hook to override rss page/default view
-	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handelr');
+	elgg_register_plugin_hook_handler('view', 'page/default', 'podcasts_rss_page_view_handler');
 
 	// Override file icon url
 	elgg_register_plugin_hook_handler('file:icon:url', 'override', 'podcasts_file_icon_url_override');
@@ -504,7 +504,7 @@ function podcasts_setup_filter_menu($hook, $type, $value, $params) {
  * 
  * @return array
  */
-function podcasts_rss_page_view_handelr($hook, $type, $value, $params) {
+function podcasts_rss_page_view_handler($hook, $type, $value, $params) {
 	if (elgg_get_viewtype() == 'rss' && elgg_in_context('podcasts')) {
 		$value = elgg_view('page/podcast', $params['vars']);
 	}
