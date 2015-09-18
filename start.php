@@ -60,7 +60,7 @@ function podcasts_init() {
 
 	// Register podcasts for notifications
 	elgg_register_notification_event('object', 'podcast', array('create'));
-	elgg_register_plugin_hook_handler('prepare', 'notification:publish:object:podcast', 'podcasts_prepare_notification');
+	elgg_register_plugin_hook_handler('prepare', 'notification:create:object:podcast', 'podcasts_prepare_notification');
 
 	// Hook into entity menu for podcasts
 	elgg_register_plugin_hook_handler('register', 'menu:entity', 'podcasts_setup_entity_menu');
