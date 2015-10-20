@@ -29,8 +29,14 @@ if (!$podcast) {
 $mime = $podcast->getMimeType();
 
 $podcastname = $podcast->getFileTitle();
+
 $file = $podcast->getFilenameOnFilestore();
-$filename = basename($file);
+
+$basefilename = basename($file);
+
+$ext = pathinfo($basefilename, PATHINFO_EXTENSION);
+
+$filename = "play.{$ext}";
 
 if (!file_exists($file)) {
 	header ("HTTP/1.1 404 Not Found");
