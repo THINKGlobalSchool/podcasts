@@ -50,7 +50,7 @@ foreach ($required as $field) {
 
 // Get/check container guid
 $container_guid = (int)get_input('container_guid', elgg_get_logged_in_user_guid());
-if (!can_write_to_container(elgg_get_logged_in_user_guid(), $container_guid)) {
+if (!empty($container_guid) && !can_write_to_container(elgg_get_logged_in_user_guid(), $container_guid)) {
 	register_error(elgg_echo('podcasts:error:edit'));
 	$error = TRUE;
 }
