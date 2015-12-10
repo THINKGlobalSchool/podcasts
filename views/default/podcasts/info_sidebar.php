@@ -43,6 +43,16 @@ if ($body) {
 
 // Add subscribe link
 $podcast_feed_url = current_page_url();
+
+
+// Replace http* protocol with feed://
+$replace = array('http://', 'https://');
+foreach($replace as $rep) {
+	if(strpos($podcast_feed_url, $rep) === 0) {
+		$podcast_feed_url = str_replace($rep, 'pcast://', $podcast_feed_url);
+	}
+}
+
 if (substr_count($podcast_feed_url, '?')) {
 	$podcast_feed_url .= "&view=rss";
 } else {
