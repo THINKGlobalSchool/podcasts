@@ -5,14 +5,21 @@
  * @package Podcasts
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Jeff Tilson
- * @copyright THINK Global School 2010 - 2013
- * @link http://www.thinkglobalschool.com/
+ * @copyright THINK Global School 2010 - 2016
+ * @link http://www.thinkglobalschool.org/
  *
  * @uses $vars['description']
  */
 
 $page_owner = elgg_get_page_owner_entity();
+
+// Could be looking at all site podcasts
+if (!$page_owner) {
+	$page_owner = elgg_get_site_entity();
+}
+
 $podcast_author = $page_owner->name;
+
 $podcast_image = $page_owner->getIconURL('large');
 $podcast_image = str_replace("&", "&amp;", $podcast_image);
 
