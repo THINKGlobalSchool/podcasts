@@ -19,6 +19,7 @@ function podcasts_init() {
 
 	// Register library
 	elgg_register_library('elgg:podcasts', elgg_get_plugins_path() . 'podcasts/lib/podcasts.php');
+	elgg_load_library('elgg:podcasts');
 
 	// Add podcasts site menu item
 	$item = new ElggMenuItem('podcasts', elgg_echo('podcasts'), 'podcasts/all');
@@ -116,9 +117,6 @@ function podcasts_init() {
  * @return bool
  */
 function podcasts_page_handler($page) {
-	// Load lib
-	elgg_load_library('elgg:podcasts');
-
 	// Load JS
 	elgg_load_js('elgg.podcasts');
 	elgg_load_js('soundmanager2');
